@@ -12,3 +12,4 @@ The table below provides an overview of the samples in this repository.
 | helloworld | Service Fabric Mesh makes it easy to create and manage Docker containers in Azure, without having to provision virtual machines. This sample creates a container in Azure and exposes it to the internet. |
 | visualobjects | Visual Object sample that show scaleout and upgrade |
 | votingapp | Shows how to deploy a .NET Core application to Service Fabric Mesh using a template. When you're finished, you have a voting application with an ASP.NET Core web front end that saves voting results in a stateful back-end service in the cluster. |
+| templates | This folder containers ARM templates to deploy container images containing some of the code samples in this repository, as well as showing how to use private registries and volumes. This provides an easy way to try and deploy the applications, without having to build the applications and container images. |
