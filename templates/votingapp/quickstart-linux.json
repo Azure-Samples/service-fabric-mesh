@@ -117,7 +117,17 @@
                       "memoryInGB": 1.0
                     }
                   }
+                }
+              ],
+              "replicaCount": 1,
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'VotingAppNetwork')]"
+                }
               ]
+            }
+          }
+                ]
           }
       }
   ]
