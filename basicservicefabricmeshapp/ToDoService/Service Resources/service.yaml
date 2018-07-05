@@ -11,10 +11,10 @@ application:
           image: todoservice:dev
           endpoints:
             - name: ToDoServiceListener
-              port: 20006
+              port: 20005
           environmentVariables:
             - name: ASPNETCORE_URLS
-              value: http://+:20006
+              value: http://+:20005
 #            - name: ApplicationInsights:InstrumentationKey
 #              value: "<Place AppInsights key here, or reference it via a secret>"
           resources:
