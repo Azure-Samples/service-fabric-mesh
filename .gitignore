@@ -52,7 +52,7 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
-**/Properties/launchSettings.json
+# **/Properties/launchSettings.json - twhitney: found we need this file checked in for SFM apps
 
 # StyleCop
 StyleCopReport.xml
