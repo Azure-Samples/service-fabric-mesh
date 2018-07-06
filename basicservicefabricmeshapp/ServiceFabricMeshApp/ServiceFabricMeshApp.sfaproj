@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.SFApp.Sdk">
   <PropertyGroup Label="Globals">
-    <ProjectGuid>0b752616-61cc-4f48-8454-bcedd014f64f</ProjectGuid>
+    <ProjectGuid>c89b0c1c-b14d-4f59-a6f8-d19ae5c3717a</ProjectGuid>
     <SFApplicationProjectVersion>0.7</SFApplicationProjectVersion>
     <SFApplicationTargetsVersion>0.7</SFApplicationTargetsVersion>
     <SFApplicationToolingVersion>0.7.0.0</SFApplicationToolingVersion>
