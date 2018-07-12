@@ -3,22 +3,20 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "defaultValue": "westus",
-      "type": "String",
+      "type": "string",
       "metadata": {
         "description": "Location of the resources."
       }
     }
   },
-  "resources": [ 
+  "resources": [
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "VotingAppNetwork",
-      "type": "Microsoft.ServiceFabric/networks",
+      "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "schemaVersion": "0.0.1",
         "description": "VotingAppNetwork description.",
         "addressPrefix": "10.0.0.4/22",
         "ingressConfig": {
@@ -35,15 +33,14 @@
       }
     },
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "VotingApp",
-      "type": "Microsoft.ServiceFabric/applications",
+      "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabric/networks/VotingAppNetwork"
+        "Microsoft.ServiceFabricMesh/networks/VotingAppNetwork"
       ],
       "properties": {
-        "schemaVersion": "0.0.1",
         "description": "Mesh Voting App",
         "services": [
           {
@@ -70,7 +67,7 @@
                   "resources": {
                     "requests": {
                       "cpu": 0.5,
-                      "memoryInGB": 1.0
+                      "memoryInGB": 1
                     }
                   }
                 }
@@ -78,7 +75,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'VotingAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'VotingAppNetwork')]"
                 }
               ]
             }
@@ -115,7 +112,7 @@
                   "resources": {
                     "requests": {
                       "cpu": 0.5,
-                      "memoryInGB": 1.0
+                      "memoryInGB": 1
                     }
                   }
                 }
@@ -123,7 +120,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'VotingAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'VotingAppNetwork')]"
                 }
               ]
             }

@@ -4,7 +4,6 @@
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "eastus",
       "metadata": {
         "description": "Location of the resources."
       }
@@ -30,9 +29,9 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "mysharel",
-      "type": "Microsoft.ServiceFabric/volumes",
+      "type": "Microsoft.ServiceFabricMesh/volumes",
       "location": "[parameters('location')]",
       "properties": {
         "description": "File share backed by Azure Files storage.",
@@ -45,12 +44,12 @@
       }
     },
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "myappl",
-      "type": "Microsoft.ServiceFabric/applications",
+      "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabric/volumes/mysharel"
+        "Microsoft.ServiceFabricMesh/volumes/mysharel"
       ],
       "properties": {
         "services": [
@@ -64,7 +63,7 @@
                   "image": "seabreeze/volumetest:linux-v1",
                   "volumeRefs": [
                     {
-                      "name": "[resourceId('Microsoft.ServiceFabric/volumes', 'mysharel')]",
+                      "name": "[resourceId('Microsoft.ServiceFabricMesh/volumes', 'mysharel')]",
                       "destinationPath": "/VolumeTest/Data"
                     }
                   ],

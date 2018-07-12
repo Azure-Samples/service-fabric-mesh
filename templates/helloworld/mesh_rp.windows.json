@@ -4,7 +4,6 @@
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "westus",
       "metadata": {
         "description": "Location of the resources."
       }
@@ -12,13 +11,12 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "helloWorldNetworkWindows",
-      "type": "Microsoft.ServiceFabric/networks",
+      "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "schemaVersion": "0.0.1",
         "addressPrefix": "10.0.0.4/22",
         "ingressConfig": {
           "layer4": [
@@ -33,18 +31,18 @@
       }
     },
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "helloWorldAppWindows",
-      "type": "Microsoft.ServiceFabric/applications",
+      "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabric/networks/helloWorldNetworkWindows"
+        "Microsoft.ServiceFabricMesh/networks/helloWorldNetworkWindows"
       ],
       "properties": {
         "description": "Service Fabric Mesh HelloWorld Application!",
         "services": [
           {
-            "type": "Microsoft.ServiceFabric/services",
+            "type": "Microsoft.ServiceFabricMesh/services",
             "location": "[parameters('location')]",
             "name": "helloWorldService",
             "properties": {
@@ -71,7 +69,7 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'helloWorldNetworkWindows')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldNetworkWindows')]"
                 }
               ]
             }

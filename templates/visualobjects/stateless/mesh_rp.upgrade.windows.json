@@ -4,7 +4,6 @@
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "eastus",
       "metadata": {
         "description": "Location of the resources."
       }
@@ -12,17 +11,17 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "visualObjectsNetworkWindows",
-      "type": "Microsoft.ServiceFabric/networks",
+      "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "schemaVersion": "0.0.1",
         "addressPrefix": "10.0.0.4/22",
         "ingressConfig": {
           "layer4": [
             {
+              "name": "webIngress",
               "publicPort": "80",
               "applicationName": "visualObjectsAppWindows",
               "serviceName": "web",
@@ -33,18 +32,18 @@
       }
     },
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "visualObjectsAppWindows",
-      "type": "Microsoft.ServiceFabric/applications",
+      "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabric/networks/visualObjectsNetworkWindows"
+        "Microsoft.ServiceFabricMesh/networks/visualObjectsNetworkWindows"
       ],
       "properties": {
         "description": "Service Fabric Mesh Visual Objects Application!",
         "services": [
           {
-            "type": "Microsoft.ServiceFabric/services",
+            "type": "Microsoft.ServiceFabricMesh/services",
             "location": "[parameters('location')]",
             "name": "web",
             "properties": {
@@ -71,13 +70,13 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'visualObjectsNetworkWindows')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'visualObjectsNetworkWindows')]"
                 }
               ]
             }
           },
           {
-            "type": "Microsoft.ServiceFabric/services",
+            "type": "Microsoft.ServiceFabricMesh/services",
             "location": "[parameters('location')]",
             "name": "worker",
             "properties": {
@@ -98,7 +97,7 @@
               "replicaCount": "3",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'visualObjectsNetworkWindows')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'visualObjectsNetworkWindows')]"
                 }
               ]
             }
