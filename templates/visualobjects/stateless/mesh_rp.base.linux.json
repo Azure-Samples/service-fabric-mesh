@@ -40,7 +40,7 @@
         "Microsoft.ServiceFabricMesh/networks/visualObjectsNetwork"
       ],
       "properties": {
-        "stretchdescription": "Service Fabric Mesh Visual Objects Application!",
+        "description": "Service Fabric Mesh Visual Objects Application!",
         "services": [
           {
             "type": "Microsoft.ServiceFabricMesh/services",
