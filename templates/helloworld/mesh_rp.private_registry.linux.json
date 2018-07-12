@@ -30,7 +30,7 @@
   "resources": [
     {
       "apiVersion": "2018-07-01-preview",
-      "name": "privateRegistryExampleNetwork",
+      "name": "helloWorldPrivateRegistryNetwork",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
@@ -40,7 +40,7 @@
           "layer4": [
             {
               "publicPort": "80",
-              "applicationName": "privateRegistryExampleApp",
+              "applicationName": "helloWorldPrivateRegistryApp",
               "serviceName": "helloWorldService",
               "endpointName": "helloWorldListener"
             }
@@ -50,11 +50,11 @@
     },
     {
       "apiVersion": "2018-07-01-preview",
-      "name": "privateRegistryExampleApp",
+      "name": "helloWorldPrivateRegistryApp",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/privateRegistryExampleNetwork"
+        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork"
       ],
       "properties": {
         "description": "SeaBreeze example application with container deployed from private image registry.",
@@ -69,7 +69,7 @@
               "codePackages": [
                 {
                   "name": "helloWorldCode",
-                  "image": "aci-helloworld:v1",
+                  "image": "azure-mesh-helloworld:1.1-alpine",
                   "imageRegistryCredential": {
                     "server": "[parameters('registry-server')]",
                     "username": "[parameters('registry-username')]",
@@ -92,7 +92,7 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'privateRegistryExampleNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]"
                 }
               ]
             }
