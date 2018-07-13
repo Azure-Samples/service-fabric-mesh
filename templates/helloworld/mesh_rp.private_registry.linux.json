@@ -21,7 +21,7 @@
       }
     },
     "registry-password": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "Password for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"passwords[0].value\"' will show the password."
       }
