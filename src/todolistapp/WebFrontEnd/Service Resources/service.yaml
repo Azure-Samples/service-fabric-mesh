@@ -18,7 +18,7 @@ application:
                 - name: ASPNETCORE_URLS
                   value: http://+:20006
                 - name: ApiHostPort
-                  value: 2008
+                  value: 20008
                 - name: ServiceName
                   value: ToDoService
 #                - name: ApplicationInsights:InstrumentationKey
