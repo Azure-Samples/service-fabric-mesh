@@ -1,0 +1,14 @@
+## Network definition ##
+network:
+  schemaVersion: 1.0.0-preview1
+  name: todolistappNetwork
+  properties:
+    description: todolistappNetwork description.
+    addressPrefix: 10.0.0.4/22
+    ingressConfig:
+      layer4:
+        - name: WebFrontEndIngress
+          publicPort: 20006
+          applicationName: todolistapp
+          serviceName: WebFrontEnd
+          endpointName: WebFrontEndListener

@@ -1,0 +1,32 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview1
+  name: todolistapp
+  properties:
+    services:
+      - name: WebFrontEnd
+        properties:
+          description: WebFrontEnd description.
+          osType: Windows
+          codePackages:
+            - name: WebFrontEnd
+              image: webfrontend:dev
+              endpoints:
+                - name: WebFrontEndListener
+                  port: 20006
+              environmentVariables:
+                - name: ASPNETCORE_URLS
+                  value: http://+:20006
+                - name: ApiHostPort
+                  value: 2008
+                - name: ServiceName
+                  value: ToDoService
+#                - name: ApplicationInsights:InstrumentationKey
+#                  value: "<Place AppInsights key here, or reference it via a secret>"
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 1
+          replicaCount: 1
+          networkRefs:
+            - name: todolistappNetwork
