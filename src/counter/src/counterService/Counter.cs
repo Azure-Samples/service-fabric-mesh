@@ -18,6 +18,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         private long value;
         private readonly FileStore store;
         private readonly string dataFilePath;
+        private readonly string stateFolderPath;
         private bool disposed = false;
         private readonly bool storeCreated = false;
 
@@ -31,14 +32,14 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         {
             this.store = store;
             this.UpdateInterval = updateInterval;
-            var stateFolder = store.GetStateFolder();
+            this.stateFolderPath = store.GetStateFolderPath();
 
-            if (!Directory.Exists(stateFolder))
+            if (!Directory.Exists(this.stateFolderPath))
             {
-                Directory.CreateDirectory(stateFolder);
+                Directory.CreateDirectory(this.stateFolderPath);
             }
 
-            this.dataFilePath = Path.Combine(stateFolder, "counter.txt");
+            this.dataFilePath = Path.Combine(this.stateFolderPath, "counter.txt");
             if (File.Exists(this.dataFilePath))
             {
                 if (!long.TryParse(File.ReadAllText(this.dataFilePath), out this.value))
@@ -74,6 +75,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             {
                 var counterValue = Interlocked.Increment(ref this.value);
                 File.WriteAllText(this.dataFilePath, counterValue.ToString());
+                this.store.StateFolderModified(this.stateFolderPath);
                 await Task.Delay(this.UpdateInterval);
             }
         }

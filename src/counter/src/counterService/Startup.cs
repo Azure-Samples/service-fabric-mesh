@@ -105,7 +105,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
 
         private static Counter CreateCounter()
         {
-            return new Counter();
+            return new Counter(new FileStore(true, "counter"));
         }
     }
 }

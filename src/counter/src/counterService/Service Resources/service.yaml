@@ -11,9 +11,6 @@ application:
           codePackages:
             - name: counterService
               image: counterservice:dev
-              volumeRefs:
-                - name: counterVolume
-                  destinationPath: /app/data
               endpoints:
                 - name: counterServiceListener
                   port: 8080

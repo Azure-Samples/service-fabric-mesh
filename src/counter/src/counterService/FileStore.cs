@@ -13,20 +13,22 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
     public class FileStore : IDisposable
     {
         private const string StoreRootFolderEnvVar = "STORE_ROOT";
-        private const string StateFolderNameEnvVar = "Fabric_Id";
+        private const string StateFolderNameEnvVar = "STATE_FOLDER_NAME";
+        private const string FabricIdEnvVar = "Fabric_Id";
         private const string StoreCleanupEnabledEnvVar = "STORE_CLEANUP_ENABLED";
         private const string StoreCleanupInternalEnvVar = "STORE_CLEANUP_INTERVAL_MINUTES";
         private const string StoreCleanupStaleFolderIntervalEnvVar = "STORE_CLEANUP_STALE_FOLDER_INTERVAL_MINUTES";
 
         private const string StoreRootFolderName = "data";
+        private const string LastModifiedTimeStampFileName = "__lastmodified__";
 
         private bool disposedValue = false;
         private Timer cleanupTimer;
         private readonly string storeRootPath;
         private readonly CleanupSettings cleanupSettings;
 
-        public FileStore(bool createIfDoesNotExist = false)
-            : this(createIfDoesNotExist, GetStoreRootPath(), GetCleanupSettings())
+        public FileStore(bool createIfDoesNotExist = false, string appName = null)
+            : this(createIfDoesNotExist, GetStoreRootPath(appName), GetCleanupSettings())
         {
         }
 
@@ -60,16 +62,33 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             Dispose(true);
         }
 
-        public string GetStateFolder()
+        public string GetStateFolderPath()
         {
             var subFolderName = Environment.GetEnvironmentVariable(StateFolderNameEnvVar);
-            if (null == subFolderName)
+            if (string.IsNullOrEmpty(subFolderName))
+            {
+                subFolderName = Environment.GetEnvironmentVariable(FabricIdEnvVar);
+            }
+
+            if (string.IsNullOrEmpty(subFolderName))
             {
                 subFolderName = Guid.NewGuid().ToString();
             }
 
             var stateFolderPath = Path.Combine(this.storeRootPath, subFolderName);
             return stateFolderPath;
+        }
+
+        public void StateFolderModified(string stateFolderPath)
+        {
+            try
+            {
+                File.WriteAllText(Path.Combine(stateFolderPath, LastModifiedTimeStampFileName), DateTime.UtcNow.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error {1} in updating last modified timestamp for the folder {0}", e.ToString(), stateFolderPath);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -98,13 +117,18 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             }
         }
 
-        private static string GetStoreRootPath()
+        private static string GetStoreRootPath(string appName)
         {
             var storeRootPath = Environment.GetEnvironmentVariable(StoreRootFolderEnvVar);
-            if (null == storeRootPath)
+            if (string.IsNullOrEmpty(storeRootPath))
             {
                 var codeFolderFullPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 storeRootPath = Path.Combine(codeFolderFullPath, StoreRootFolderName);
+            }
+
+            if (!string.IsNullOrEmpty(appName))
+            {
+                storeRootPath = Path.Combine(storeRootPath, appName);
             }
 
             return storeRootPath;
@@ -121,12 +145,12 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             {
                 if (!int.TryParse(Environment.GetEnvironmentVariable(StoreCleanupInternalEnvVar), out int storeCleanupInternalMinutes))
                 {
-                    storeCleanupInternalMinutes = 1;
+                    storeCleanupInternalMinutes = 5;
                 }
 
                 if (!int.TryParse(Environment.GetEnvironmentVariable(StoreCleanupStaleFolderIntervalEnvVar), out int storeCleanupStaleFolderIntervalMinutes))
                 {
-                    storeCleanupStaleFolderIntervalMinutes = 2;
+                    storeCleanupStaleFolderIntervalMinutes = 10;
                 }
 
                 return new CleanupSettings(
@@ -147,9 +171,10 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
                 {
                     try
                     {
-                        if (GetLastModifiedTimeUtc(stateFolder).CompareTo(notModifiedSinceUtc) < 0)
+                        var lastModifiedTimeUtc = GetLastModifiedTimeUtc(stateFolder);
+                        if (lastModifiedTimeUtc.CompareTo(notModifiedSinceUtc) < 0)
                         {
-                            Console.WriteLine("The folder {0} is stale, deleting it.", stateFolder);
+                            Console.WriteLine("The folder {0} is stale, lastModifiedAt = {1}, Checking for {2}, deleting it.", stateFolder, lastModifiedTimeUtc, notModifiedSinceUtc);
                             Directory.Delete(stateFolder, true);
                         }
                     }
@@ -168,8 +193,23 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         private static DateTime GetLastModifiedTimeUtc(string folderPath)
         {
             var folderLastModifiedTimeUtc = Directory.GetLastWriteTimeUtc(folderPath);
-            foreach (var filePath in Directory.GetFiles(folderPath))
+
+            var filePaths = Directory.GetFiles(folderPath);
+            foreach (var filePath in filePaths)
             {
+                if (string.CompareOrdinal(Path.GetFileNameWithoutExtension(filePath), LastModifiedTimeStampFileName) == 0)
+                {
+                    // try to read the last modified from the special file
+                    if (DateTime.TryParse(File.ReadAllText(filePath), out DateTime lastModifiedValueUtc))
+                    {
+                        folderLastModifiedTimeUtc = lastModifiedValueUtc;
+                        break;
+                    }
+                }
+            }
+
+            foreach (var filePath in filePaths)
+            { 
                 var fileLastModifiedTimeUtc = File.GetLastWriteTimeUtc(filePath);
                 if (folderLastModifiedTimeUtc.CompareTo(fileLastModifiedTimeUtc) < 0)
                 {

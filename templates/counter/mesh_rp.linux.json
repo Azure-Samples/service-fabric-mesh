@@ -8,22 +8,29 @@
         "description": "Location of the resources."
       }
     },
-    "azurefile-shareName": {
+    "fileShareName": {
       "type": "string",
       "metadata": {
         "description": "Name of the Azure Files file share that provides the volume for the container."
       }
     },
-    "azurefile-accountName": {
+    "storageAccountName": {
       "type": "string",
       "metadata": {
         "description": "Name of the Azure storage account that contains the file share."
       }
     },
-    "azurefile-accountKey": {
+    "storageAccountKey": {
       "type": "securestring",
       "metadata": {
         "description": "Access key for the Azure storage account that contains the file share."
+      }
+    },
+    "stateFolderName": {
+      "type": "string",
+      "defaultValue": "CounterService",
+      "metadata": {
+        "description": "Folder in which to store the state. Provide a non-empty value to keep state across deployment, however please ensure that it is not used by more than one application at a time."
       }
     }
   },
@@ -34,7 +41,7 @@
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/counterAppNetwork",
+        "Microsoft.ServiceFabricMesh/networks/counterAppWindowsNetwork",
         "Microsoft.ServiceFabricMesh/volumes/counterVolume"
       ],
       "properties": {
@@ -48,7 +55,7 @@
               "codePackages": [
                 {
                   "name": "counterService",
-                  "image": "vipulmmsft/azure-mesh-counter:dev-alpine",
+                  "image": "seabreeze/azure-mesh-counter:1.0-alpine",
                   "volumeRefs": [
                     {
                       "name": "[resourceId('Microsoft.ServiceFabricMesh/volumes', 'counterVolume')]",
@@ -58,7 +65,13 @@
                   "endpoints": [
                     {
                       "name": "counterServiceListener",
-                      "port": 8080
+                      "port": 80
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "STATE_FOLDER_NAME",
+                      "value": "[parameters('stateFolderName')]"
                     }
                   ],
                   "resources": {
@@ -72,7 +85,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppWindowsNetwork')]"
                 }
               ]
             }
@@ -82,7 +95,7 @@
     },
     {
       "apiVersion": "2018-07-01-preview",
-      "name": "counterAppNetwork",
+      "name": "counterAppWindowsNetwork",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
@@ -93,7 +106,7 @@
           "layer4": [
             {
               "name": "counterServiceIngress",
-              "publicPort": "8080",
+              "publicPort": "80",
               "applicationName": "counterApp",
               "serviceName": "counterService",
               "endpointName": "counterServiceListener"
@@ -112,9 +125,9 @@
         "description": "Azure Files storage volume for counter App.",
         "provider": "SFAzureFile",
         "azureFileParameters": {
-          "shareName": "[parameters('azurefile-shareName')]",
-          "accountName": "[parameters('azurefile-accountName')]",
-          "accountKey": "[parameters('azurefile-accountKey')]"
+          "shareName": "[parameters('fileShareName')]",
+          "accountName": "[parameters('storageAccountName')]",
+          "accountKey": "[parameters('storageAccountKey')]"
         }
       }
     }
