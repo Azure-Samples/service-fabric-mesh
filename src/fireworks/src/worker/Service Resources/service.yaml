@@ -14,8 +14,6 @@ application:
               environmentVariables:
                 - name: OBJECT_TYPE
                   value: red
-                - name: OBJECT_COUNTER_ADDRESS
-                  value: 192.168.0.38:8080
               resources:
                 requests:
                   cpu: 0.25
