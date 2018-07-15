@@ -30,7 +30,7 @@
       "type": "string",
       "defaultValue": "CounterService",
       "metadata": {
-        "description": "Folder in which to store the state. Provide a non-empty value to keep state across deployment, however please ensure that it is not used by more than one application at a time."
+        "description": "Folder in which to store the state. Provide a empty value to create a unique folder for each container to store the state. A non-empty value will retain the state across deployments, however if more than one applications are using the same folder, the counter may update more frequently."
       }
     }
   },
@@ -55,7 +55,7 @@
               "codePackages": [
                 {
                   "name": "counterService",
-                  "image": "seabreeze/azure-mesh-counter:1.0-windowsservercore-1709",
+                  "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
                   "volumeRefs": [
                     {
                       "name": "[resourceId('Microsoft.ServiceFabricMesh/volumes', 'counterVolumeWindows')]",

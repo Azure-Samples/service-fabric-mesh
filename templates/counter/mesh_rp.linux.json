@@ -30,7 +30,7 @@
       "type": "string",
       "defaultValue": "CounterService",
       "metadata": {
-        "description": "Folder in which to store the state. Provide a non-empty value to keep state across deployment, however please ensure that it is not used by more than one application at a time."
+        "description": "Folder in which to store the state. Provide a empty value to create a unique folder for each container to store the state. A non-empty value will retain the state across deployments, however if more than one applications are using the same folder, the counter may update more frequently."
       }
     }
   },
@@ -41,7 +41,7 @@
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/counterAppWindowsNetwork",
+        "Microsoft.ServiceFabricMesh/networks/counterAppNetwork",
         "Microsoft.ServiceFabricMesh/volumes/counterVolume"
       ],
       "properties": {
@@ -55,7 +55,7 @@
               "codePackages": [
                 {
                   "name": "counterService",
-                  "image": "seabreeze/azure-mesh-counter:1.0-alpine",
+                  "image": "seabreeze/azure-mesh-counter:0.1-alpine",
                   "volumeRefs": [
                     {
                       "name": "[resourceId('Microsoft.ServiceFabricMesh/volumes', 'counterVolume')]",
@@ -85,7 +85,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppWindowsNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]"
                 }
               ]
             }
@@ -95,7 +95,7 @@
     },
     {
       "apiVersion": "2018-07-01-preview",
-      "name": "counterAppWindowsNetwork",
+      "name": "counterAppNetwork",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],

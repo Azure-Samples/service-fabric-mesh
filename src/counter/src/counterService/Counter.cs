@@ -14,42 +14,38 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
     public class Counter : IDisposable
     {
         private const string CounterUpdateInternalEnvVar = "COUNTER_UPDATE_INTERVAL_SECONDS";
-
-        private long value;
-        private readonly FileStore store;
-        private readonly string dataFilePath;
+        
+        private readonly string stateFilePath;
         private readonly string stateFolderPath;
-        private bool disposed = false;
-        private readonly bool storeCreated = false;
 
-        public Counter(FileStore store = null)
-            : this(store ?? new FileStore(), GetCounterUpdateInterval())
+        private bool disposed = false;
+        private long value;
+
+
+        public Counter()
+            : this(GetCounterUpdateInterval())
         {
-            this.storeCreated = true;
         }
 
-        public Counter(FileStore store, TimeSpan updateInterval)
+        public Counter(TimeSpan updateInterval)
         {
-            this.store = store;
             this.UpdateInterval = updateInterval;
-            this.stateFolderPath = store.GetStateFolderPath();
+            this.stateFolderPath = FileStoreUtility.GetStateFolderPath("counter");
 
             if (!Directory.Exists(this.stateFolderPath))
             {
                 Directory.CreateDirectory(this.stateFolderPath);
             }
 
-            this.dataFilePath = Path.Combine(this.stateFolderPath, "counter.txt");
-            if (File.Exists(this.dataFilePath))
+            this.stateFilePath = Path.Combine(this.stateFolderPath, "counter.txt");
+            if (!File.Exists(this.stateFilePath))
             {
-                if (!long.TryParse(File.ReadAllText(this.dataFilePath), out this.value))
-                {
-                    this.value = 0;
-                }
+                this.value = 0;
+                WriteCounterValue(this.stateFilePath, this.value);
             }
             else
             {
-                this.value = 0;
+                this.value = ReadCounterValue(this.stateFilePath);
             }
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -73,10 +69,45 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         {
             while (!this.disposed)
             {
-                var counterValue = Interlocked.Increment(ref this.value);
-                File.WriteAllText(this.dataFilePath, counterValue.ToString());
-                this.store.StateFolderModified(this.stateFolderPath);
+                var currentValue = ReadCounterValue(this.stateFilePath);
+                if (currentValue != -1)
+                {
+                    currentValue++;
+                    WriteCounterValue(this.stateFilePath, currentValue);
+                    Interlocked.Exchange(ref this.value, currentValue);
+                }
+
                 await Task.Delay(this.UpdateInterval);
+            }
+        }
+
+        private static long ReadCounterValue(string stateFilePath)
+        {
+            try
+            {
+                if (!long.TryParse(File.ReadAllText(stateFilePath), out long value))
+                {
+                    value = -1;
+                }
+
+                return value;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Error {0} in reading counter value from file {1}.", e.Message, stateFilePath);
+                return -1;
+            }
+        }
+
+        private static void WriteCounterValue(string stateFilePath, long value)
+        {
+            try
+            {
+                File.WriteAllText(stateFilePath, value.ToString());
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Error {0} in writer counter value to file {1}.", e.Message, stateFilePath);
             }
         }
 
@@ -89,7 +120,6 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
 
             return TimeSpan.FromSeconds(counterUpdateInternalSeconds);
         }
-
         
         protected virtual void Dispose(bool disposing)
         {
@@ -97,10 +127,6 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             {
                 if (disposing)
                 {
-                    if (this.storeCreated)
-                    {
-                        this.store.Dispose();
-                    }
                 }
 
                 disposed = true;
