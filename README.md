@@ -1,4 +1,4 @@
-# service-fabric-mesh-samples
+# Service Fabric Mesh Samples
 
 This repository contains samples that showcase various features of Service Fabric Mesh. 
 
