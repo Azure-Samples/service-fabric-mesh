@@ -1,4 +1,4 @@
-# Contributing to [project-title]
+# Contributing to Service Fabric Mesh Samples
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
@@ -37,7 +37,11 @@ a proposal for your work first, to be sure that we can use it.
 ### <a name="submit-issue"></a> Submitting an Issue
 Before you submit an issue, search the archive, maybe your question was already answered.
 
-If your issue appears to be a bug, and hasn't been reported, open a new issue.
+
+* [Service Fabric Issues](https://github.com/Azure/service-fabric-issues)
+* [Service Fabric Mesh Preview Issues](https://github.com/Azure/service-fabric-mesh-preview/issues)
+
+If your issue appears to be a bug in Service Fabric Mesh samples, and hasn't been reported, open a new issue.
 Help us to maximize the effort we can spend fixing issues and adding new
 features, by not reporting duplicate issues.  Providing the following information will increase the
 chances of your issue being dealt with quickly:
@@ -45,18 +49,21 @@ chances of your issue being dealt with quickly:
 * **Overview of the Issue** - if an error is being thrown a non-minified stack trace helps
 * **Version** - what version is affected (e.g. 0.1.2)
 * **Motivation for or Use Case** - explain what are you trying to do and why the current behavior is a bug for you
-* **Browsers and Operating System** - is this a problem with all browsers?
+* **Service Fabric Runtime Version** - is this a problem with particular Service Fabric runtime?
+* **Service Fabric SDK Version** - is this a problem with particular Service Fabric SDK?
+* **Service Fabric Mesh SDK Version** - is this a problem with particular Mesh SDK?
+* **Service Fabric Mesh CLI Version** - is this a problem with particular Mesh CLI?
 * **Reproduce the Error** - provide a live example or a unambiguous set of steps
 * **Related Issues** - has a similar issue been reported before?
 * **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
   causing the problem (line of code or commit)
 
-You can file new issues by providing the above information at the corresponding repository's issues link: https://github.com/[organization-name]/[repository-name]/issues/new].
+You can file new issues by providing the above information at the corresponding repository's issues link: https://github.com/Azure-Samples/service-fabric-mesh/issues/new].
 
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-* Search the repository (https://github.com/[organization-name]/[repository-name]/pulls) for an open or closed PR
+* Search the repository (https://github.com/Azure-Samples/service-fabric-mesh/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
 
 * Make your changes in a new git fork:
