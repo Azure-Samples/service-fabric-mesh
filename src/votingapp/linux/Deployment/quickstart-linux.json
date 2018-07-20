@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "defaultValue": "westus",
+      "defaultValue": "eastus",
       "type": "String",
       "metadata": {
         "description": "Location of the resources."
@@ -12,9 +12,9 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "VotingAppNetwork",
-      "type": "Microsoft.ServiceFabric/networks",
+      "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
@@ -34,12 +34,12 @@
       }
     },
     {
-      "apiVersion": "2018-03-01-privatepreview",
+      "apiVersion": "2018-07-01-preview",
       "name": "VotingApp",
-      "type": "Microsoft.ServiceFabric/applications",
+      "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabric/networks/VotingAppNetwork"
+        "Microsoft.ServiceFabricMesh/networks/VotingAppNetwork"
       ],
       "properties": {
         "services": [
@@ -75,7 +75,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'VotingAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'VotingAppNetwork')]"
                 }
               ]
             }
@@ -120,7 +120,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabric/networks', 'VotingAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'VotingAppNetwork')]"
                 }
               ]
             }
