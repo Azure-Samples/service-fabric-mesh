@@ -51,7 +51,7 @@
               "codePackages": [
                 {
                   "name": "VotingData",
-                  "image": "seabreeze/votingdata:1.0-linux",
+                  "image": "votingdata:dev",
                   "endpoints": [
                     {
                       "name": "VotingDataListener",
@@ -88,7 +88,7 @@
               "codePackages": [
                 {
                   "name": "VotingWeb",
-                  "image": "seabreeze/votingweb:1.0-linux",
+                  "image": "votingweb:dev",
                   "endpoints": [
                     {
                       "name": "VotingWebListener",
