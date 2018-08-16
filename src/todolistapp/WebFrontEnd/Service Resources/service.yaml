@@ -19,7 +19,7 @@ application:
                   value: http://+:20006
                 - name: ApiHostPort
                   value: 20008
-                - name: ServiceName
+                - name: ToDoServiceName
                   value: ToDoService
 #                - name: ApplicationInsights:InstrumentationKey
 #                  value: "<Place AppInsights key here, or reference it via a secret>"

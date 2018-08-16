@@ -25,7 +25,7 @@ namespace WebFrontEnd.Pages
             }
         }
 
-        private static string backendDNSName = $"{Environment.GetEnvironmentVariable("ServiceName")}";
+        private static string backendDNSName = $"{Environment.GetEnvironmentVariable("ToDoServiceName")}";
         private static Uri backendUrl = new Uri($"http://{backendDNSName}:{Environment.GetEnvironmentVariable("ApiHostPort")}/api/todo");
     }
 }
