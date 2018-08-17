@@ -1,8 +1,8 @@
-FROM microsoft/aspnetcore:2.0-nanoserver-1709 AS base
+FROM microsoft/dotnet:2.1-aspnetcore-runtime-nanoserver-sac2016 AS base
 WORKDIR /app
 EXPOSE 20006
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM microsoft/dotnet:2.1-sdk-nanoserver-sac2016 AS build
 WORKDIR /src
 COPY WebFrontEnd/WebFrontEnd.csproj WebFrontEnd/
 RUN dotnet restore WebFrontEnd/WebFrontEnd.csproj
