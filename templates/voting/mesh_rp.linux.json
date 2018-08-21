@@ -12,21 +12,21 @@
   "resources": [
     {
       "apiVersion": "2018-07-01-preview",
-      "name": "VotingAppNetworkLinux",
+      "name": "votingapp-network-linux",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "description": "VotingApp Network",
+        "description": "Voting app for Linux network",
         "addressPrefix": "10.0.0.4/22",
         "ingressConfig": {
           "layer4": [
             {
-              "name": "VotingWebIngress",
-              "publicPort": "80",
-              "applicationName": "VotingAppLinux",
-              "serviceName": "VotingWeb",
-              "endpointName": "VotingWebListener"
+              "name": "votingweb-ingress",
+              "publicPort": "8080",
+              "applicationName": "votingapp-linux",
+              "serviceName": "votingweb",
+              "endpointName": "votingweb-listener"
             }
           ]
         }
@@ -34,26 +34,26 @@
     },
     {
       "apiVersion": "2018-07-01-preview",
-      "name": "VotingApp",
+      "name": "votingapp-linux",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/VotingAppNetworkLinux"
+        "Microsoft.ServiceFabricMesh/networks/votingapp-network-linux"
       ],
       "properties": {
         "services": [
           {
-            "name": "VotingData",
+            "name": "votingdata",
             "properties": {
-              "description": "VotingData Backend",
+              "description": "Voting Data service",
               "osType": "linux",
               "codePackages": [
                 {
-                  "name": "VotingData",
+                  "name": "votingdata",
                   "image": "seabreeze/azure-mesh-quickstart-data:1.0-stretch",
                   "endpoints": [
                     {
-                      "name": "VotingDataListener",
+                      "name": "votingdata-listener",
                       "port": 8288
                     }
                   ],
@@ -74,23 +74,23 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'VotingAppNetworkLinux')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]"
                 }
               ]
             }
           },
           {
-            "name": "VotingWeb",
+            "name": "votingweb",
             "properties": {
-              "description": "VotingWeb Frontend",
+              "description": "Voting Web frontend",
               "osType": "linux",
               "codePackages": [
                 {
-                  "name": "VotingWeb",
+                  "name": "votingweb",
                   "image": "seabreeze/azure-mesh-quickstart-web:1.0-stretch",
                   "endpoints": [
                     {
-                      "name": "VotingWebListener",
+                      "name": "votingweb-listener",
                       "port": 8080
                     }
                   ],
@@ -101,7 +101,7 @@
                     },
                     {
                       "name": "Voting_BackendHostName",
-                      "value": "VotingData"
+                      "value": "votingdata"
                     },
                     {
                       "name": "Voting_BackendHostPort",
@@ -119,7 +119,7 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'VotingAppNetworkLinux')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]"
                 }
               ]
             }
