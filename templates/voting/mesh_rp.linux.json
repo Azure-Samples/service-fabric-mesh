@@ -5,7 +5,7 @@
     "location": {
       "type": "string",
       "metadata": {
-        "description": "Location of the resources."
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
       }
     }
   },
@@ -23,7 +23,7 @@
           "layer4": [
             {
               "name": "votingweb-ingress",
-              "publicPort": "8080",
+              "publicPort": "80",
               "applicationName": "votingapp-linux",
               "serviceName": "votingweb",
               "endpointName": "votingweb-listener"

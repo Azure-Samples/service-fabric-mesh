@@ -5,7 +5,7 @@
     "location": {
       "type": "string",
       "metadata": {
-        "description": "Location of the resources."
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
       }
     }
   },
