@@ -1,0 +1,220 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "defaultValue": "eastus",
+      "type": "String",
+      "metadata": {
+        "description": "Location of the resources."
+      }
+    },
+    "registryPassword": {
+      "defaultValue": "",
+      "type": "SecureString",
+      "metadata": {
+        "description": "Password for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"passwords[0].value\"' will show the password."
+      }
+    },
+    "registryUserName": {
+        "defaultValue": "",
+        "type": "string",
+        "metadata": {
+            "description": "User name for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"username\"' will show the username."
+        }
+    },
+    "registryServer": {
+        "defaultValue": "",
+        "type": "string",
+        "metadata": {
+            "description": "Private image registry server. For example, '<myacr>.azurecr.io'"
+        }
+    },
+    "frontEndImage": {
+        "defaultValue": "",
+        "type": "string",
+        "metadata": {
+            "description": "The container image for the front end web service.  For example: '<myregistry>.azurecr.io/seabreeze/azure-mesh-todo-webfrontend:1.0-nanoserver-1709'"
+        }
+    },
+    "serviceImage": {
+        "defaultValue": "",
+        "type": "string",
+        "metadata": {
+            "description": "The container image for the back end service.  For example: '<myregistry>.azurecr.io/seabreeze/azure-mesh-todo-service:1.0-nanoserver-1709'"
+        }
+    },
+    "frontEndCpu": {
+      "defaultValue": "0.5",
+      "type": "string",
+      "metadata": {
+          "description": "The CPU resources for the front end web service."
+      }
+    },
+    "serviceCpu": {
+      "defaultValue": "0.5",
+      "type": "string",
+      "metadata": {
+          "description": "The CPU resources for the back end service."
+      }
+    },
+    "frontEndMemory":{
+      "defaultValue": "1.0",
+      "type": "string",
+      "metadata": {
+          "description": "The memory in GB for the front end web service."
+      }
+    },
+    "serviceMemory":{
+      "defaultValue": "1.0",
+      "type": "string",
+      "metadata": {
+          "description": "The memory in GB for the back end service."
+      }
+    },
+    "frontEndReplicaCount":{
+      "defaultValue": "1",
+      "type": "string",
+      "metadata": {
+          "description": "The number of service replicas for the front end web service."
+      }
+    },
+    "serviceReplicaCount":{
+      "defaultValue": "1",
+      "type": "string",
+      "metadata": {
+          "description": "The number of service replicas for the back end service."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-07-01-preview",
+      "name": "todolistapp",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/todolistappNetwork"
+      ],
+      "properties": {
+        "services": [
+          {
+            "name": "WebFrontEnd",
+            "properties": {
+              "description": "WebFrontEnd description.",
+              "osType": "Windows",
+              "codePackages": [
+                {
+                  "name": "WebFrontEnd",
+                  "image": "[parameters('frontEndImage')]",
+                  "endpoints": [
+                    {
+                      "name": "WebFrontEndListener",
+                      "port": 20001
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "http://+:20001"
+                    },
+                    {
+                      "name": "ApiHostPort",
+                      "value": "20002"
+                    },
+                    {
+                      "name": "ToDoServiceName",
+                      "value": "ToDoService"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "[parameters('frontEndCpu')]",
+                      "memoryInGB": "[parameters('frontEndMemory')]"
+                    }
+                  },
+                  "imageRegistryCredential": {
+                    "server": "[parameters('registryServer')]",
+                    "username": "[parameters('registryUserName')]",
+                    "password": "[parameters('registryPassword')]"
+                  }
+                }
+              ],
+              "replicaCount": "[parameters('frontEndReplicaCount')]",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]"
+                }
+              ]
+            }
+          },
+          {
+            "name": "ToDoService",
+            "properties": {
+              "description": "ToDoService description.",
+              "osType": "Windows",
+              "codePackages": [
+                {
+                  "name": "ToDoService",
+                  "image": "[parameters('serviceImage')]",
+                  "endpoints": [
+                    {
+                      "name": "ToDoServiceListener",
+                      "port": 20002
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "http://+:20002"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "[parameters('serviceCpu')]",
+                      "memoryInGB": "[parameters('serviceMemory')]"
+                    }
+                  },
+                  "imageRegistryCredential": {
+                    "server": "[parameters('registryServer')]",
+                    "username": "[parameters('registryUserName')]",
+                    "password": "[parameters('registryPassword')]"
+                  }
+                }
+              ],
+              "replicaCount": "[parameters('serviceReplicaCount')]",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]"
+                }
+              ]
+            }
+          }
+        ],
+        "description": "todolistapp description."
+      }
+    },
+    {
+      "apiVersion": "2018-07-01-preview",
+      "name": "todolistappNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "description": "todolistappNetwork description.",
+        "addressPrefix": "10.0.0.4/22",
+        "ingressConfig": {
+          "layer4": [
+            {
+              "name": "WebFrontEndIngress",
+              "publicPort": "20001",
+              "applicationName": "todolistapp",
+              "serviceName": "WebFrontEnd",
+              "endpointName": "WebFrontEndListener"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
