@@ -33,10 +33,10 @@
         "value": "1.0"
       },
       "frontEndReplicaCount":{
-        "value": "3"
+        "value": "1"
       },
       "serviceReplicaCount":{
-        "value": "2"
+        "value": "1"
       }
   }
 }
