@@ -17,6 +17,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
+        "description": "Service Fabric Mesh network for HelloWorld sample.",
         "addressPrefix": "10.0.0.4/22",
         "ingressConfig": {
           "layer4": [
@@ -40,7 +41,7 @@
         "Microsoft.ServiceFabricMesh/networks/helloWorldNetwork"
       ],
       "properties": {
-        "description": "Service Fabric Mesh HelloWorld Application!",
+        "description": "Service Fabric Mesh HelloWorld application.",
         "services": [
           {
             "type": "Microsoft.ServiceFabricMesh/services",
