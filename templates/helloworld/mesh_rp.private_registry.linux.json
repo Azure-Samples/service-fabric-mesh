@@ -30,6 +30,30 @@
   "resources": [
     {
       "apiVersion": "2018-09-01-preview",
+      "name": "hellowWorld_acr_password",
+      "type": "Microsoft.ServiceFabricMesh/secrets",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "inlinedValue",
+        "contentType": "text/plain",
+        "description": "Azure container registry password."
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "hellowWorld_acr_password/v1",
+      "type": "Microsoft.ServiceFabricMesh/secrets/values",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/hellowWorld_acr_password"
+      ],
+      "properties": {
+        "value": "[parameters('registry-password')]"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
       "name": "helloWorldPrivateRegistryNetwork",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
@@ -54,7 +78,8 @@
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork"
+        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork",
+        "Microsoft.ServiceFabricMesh/secrets/hellowWorld_acr_password/values/v1"
       ],
       "properties": {
         "description": "SeaBreeze example application with container deployed from private image registry.",
@@ -69,11 +94,11 @@
               "codePackages": [
                 {
                   "name": "helloWorldCode",
-                  "image": "azure-mesh-helloworld:1.1-alpine",
+                  "image": "[concat(parameters('registry-server'), '/seabreeze/azure-mesh-helloworld:1.1-alpine')]",
                   "imageRegistryCredential": {
                     "server": "[parameters('registry-server')]",
                     "username": "[parameters('registry-username')]",
-                    "password": "[parameters('registry-password')]"
+                    "password": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','hellowWorld_acr_password','v1')]"
                   },
                   "endpoints": [
                     {
