@@ -25,7 +25,9 @@ Both folders contain instructions on how to work with the samples.
 
 - Documentation - https://docs.microsoft.com/azure/service-fabric-mesh/
 
-- REST API Specification - https://github.com/Azure/azure-rest-api-specs/tree/master/specification/servicefabricmesh/resource-manager 
+- REST API Specification - https://github.com/Azure/azure-rest-api-specs/tree/master/specification/servicefabricmesh/resource-manager
+
+- Azure Service Fabric Mesh lab - https://github.com/MikkelHegn/ContainersSFLab/blob/master/Instructions/ServiceFabricMesh/README.md
 
 ## Feedback and issues
 
