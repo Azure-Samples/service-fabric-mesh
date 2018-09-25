@@ -15,9 +15,9 @@ For more details about Service Fabric Mesh public preview in Azure, refer to thi
 
 This repository has two main folders:
 
-- [**src**](./src) contains source code samples. Some of these are built using the [Visual Studio Tools for Mesh](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-howto-setup-developer-environment-sdk). Use these samples if you want to build the code from source, publish container images and deploy the app to Mesh.
+- **src** contains source code samples. Some of these are built using the [Visual Studio Tools for Mesh](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-howto-setup-developer-environment-sdk). Use these samples if you want to build the code from source, publish container images and deploy the app to Mesh.
 
-- [**templates**](./templates) contains samples with ARM templates ready to deploy to Azure Mesh. Use these templates if you want to deploy an application using existing container images and deployment templates
+- **templates** contains samples with ARM templates ready to deploy to Azure Mesh. Use these templates if you want to deploy an application using existing container images and deployment templates
 
 Both folders contain instructions on how to work with the samples.
 
