@@ -29,23 +29,40 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-07-01-preview",
-      "name": "helloWorldPrivateRegistryNetwork",
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldNetwork",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "addressPrefix": "10.0.0.4/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "publicPort": "80",
-              "applicationName": "helloWorldPrivateRegistryApp",
-              "serviceName": "helloWorldService",
-              "endpointName": "helloWorldListener"
-            }
+        "kind": "Local",
+        "networkAddressPrefix": "10.0.0.4/22"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "properties": {
+          "description": "Gateway to connect to public internet.",
+          "sourceNetwork": {
+              "name": "Open"
+          },
+          "destinationNetwork": {
+              "name": "helloWorldNetwork"
+          },
+          "tcp": [
+              {
+                  "name": "PublicConnection",
+                  "port": 80,
+                  "destination": {
+                      "applicationName": "helloWorldApp",
+                      "serviceName": "helloWorldService",
+                      "endpointName": "helloWorldListener"
+                  }
+              }
           ]
-        }
       }
     },
     {
@@ -92,7 +109,12 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]"
+                  "name": "helloWorldNetwork",
+                  "endpointRefs": [
+                    {
+                      "name": "helloWorldListener"
+                    }
+                  ]
                 }
               ]
             }

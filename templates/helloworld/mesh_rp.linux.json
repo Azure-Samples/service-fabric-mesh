@@ -11,28 +11,44 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-07-01-preview",
+      "apiVersion": "2018-09-01-preview",
       "name": "helloWorldNetwork",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "addressPrefix": "10.0.0.4/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "helloWorldIngress",
-              "publicPort": "80",
-              "applicationName": "helloWorldApp",
-              "serviceName": "helloWorldService",
-              "endpointName": "helloWorldListener"
-            }
-          ]
-        }
+        "kind": "Local",
+        "networkAddressPrefix": "10.0.0.4/22"
       }
     },
     {
-      "apiVersion": "2018-07-01-preview",
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "properties": {
+          "description": "Gateway to connect to public internet.",
+          "sourceNetwork": {
+              "name": "Open"
+          },
+          "destinationNetwork": {
+              "name": "helloWorldNetwork"
+          },
+          "tcp": [
+              {
+                  "name": "PublicConnection",
+                  "port": 80,
+                  "destination": {
+                      "applicationName": "helloWorldApp",
+                      "serviceName": "helloWorldService",
+                      "endpointName": "helloWorldListener"
+                  }
+              }
+          ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
       "name": "helloWorldApp",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
@@ -40,11 +56,9 @@
         "Microsoft.ServiceFabricMesh/networks/helloWorldNetwork"
       ],
       "properties": {
-        "description": "Service Fabric Mesh HelloWorld Application!",
+        "description": "Service Fabric Mesh HelloWorld Application in Isolated Network exposed through Gateway!",
         "services": [
           {
-            "type": "Microsoft.ServiceFabricMesh/services",
-            "location": "[parameters('location')]",
             "name": "helloWorldService",
             "properties": {
               "description": "Service Fabric Mesh Hello World Service.",
@@ -80,7 +94,12 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldNetwork')]"
+                  "name": "helloWorldNetwork",
+                  "endpointRefs": [
+                    {
+                      "name": "helloWorldListener"
+                    }
+                  ]
                 }
               ]
             }
