@@ -1,0 +1,5 @@
+application:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppSFVD
+  properties:
+    description: Azure Service Fabric Mesh Counter Application.
