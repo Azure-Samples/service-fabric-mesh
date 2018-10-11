@@ -11,8 +11,6 @@ namespace ToDoService
 
         static DataContext()
         {
-            ToDoList = new Model.ToDoList("Main List");
-
             // Seed to-do list
 
             ToDoList.Add(Model.ToDoItem.Load("Learn about microservices", 0, true));
