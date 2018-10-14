@@ -1,12 +1,7 @@
-FROM microsoft/iis:windowsservercore-1709
+FROM microsoft/iis:20181009-nanoserver-sac2016
 
-RUN mkdir C:\site
-
-RUN powershell -NoProfile -Command \
-    Import-module IISAdministration; \
-    Remove-WebSite -Name 'Default Web Site'; \
-    New-IISSite -Name "Site" -PhysicalPath C:\site -BindingInformation "*:80:"
+RUN powershell -NoProfile -Command Remove-Item -Recurse C:\inetpub\wwwroot\*
+WORKDIR /inetpub/wwwroot
+COPY . .
 
 EXPOSE 80
-
-ADD . /site
