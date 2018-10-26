@@ -19,7 +19,7 @@
       "properties": {
         "kind": "Local",
         "description": "Service Fabric Mesh Network for HelloWorld sample.",
-        "addressPrefix": "2.0.0.0/16"
+        "networkAddressPrefix": "2.0.0.0/16"
       }
     },
     {
