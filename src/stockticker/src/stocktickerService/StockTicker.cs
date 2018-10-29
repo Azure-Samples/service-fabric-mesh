@@ -105,7 +105,6 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
                 }
 
                 this.ParseStockData(await response.Content.ReadAsStringAsync(), ref data);
-                Console.WriteLine("symbol : {0} price : {1}", data.Symbol, data.LastKnownValue);
             }
             catch (Exception e)
             {

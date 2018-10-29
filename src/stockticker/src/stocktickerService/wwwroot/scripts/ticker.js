@@ -25,7 +25,7 @@ function initWebSocket() {
 function onNewDataReceived(jsonString) {
     try {
         jsonData = JSON.parse(jsonString);
-        str = "";
+        str = "" ;
         for (var i=0; i<jsonData.length; i++)
         {
             str = str + jsonData[i].CompanyName + "  :  " + jsonData[i].LastKnownValue;

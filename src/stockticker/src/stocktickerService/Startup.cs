@@ -76,8 +76,9 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
             {
                 while (true)
                 {
-                    byte[] buffer = Encoding.UTF8.GetBytes(stockTicker.GetStockData());
-
+                    var stockData = stockTicker.GetStockData();
+                    Console.WriteLine(stockData);
+                    byte[] buffer = Encoding.UTF8.GetBytes(stockData);
                     try
                     {
                         await webSocket.SendAsync(
