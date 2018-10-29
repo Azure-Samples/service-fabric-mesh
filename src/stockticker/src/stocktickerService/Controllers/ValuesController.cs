@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : Controller
     {
         private StockTicker ticker;
 

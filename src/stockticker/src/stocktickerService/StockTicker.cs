@@ -26,7 +26,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         public void Open()
         {
             this.httpClient = new HttpClient();
-            this.refreshInterval = TimeSpan.FromSeconds(3);
+            this.refreshInterval = TimeSpan.FromSeconds(15); // The alphavantage api only allows 5 calls per minute
             this.stockData = new List<StockData>();
             this.dataLock = new ReaderWriterLockSlim();
             this.cts = new CancellationTokenSource();
@@ -105,6 +105,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
                 }
 
                 data.LastKnownValue = this.GetStockPrice(await response.Content.ReadAsStringAsync());
+                Console.WriteLine("symbol : {0} price : {1}", data.Symbol, data.LastKnownValue);
             }
             catch (Exception e)
             {
