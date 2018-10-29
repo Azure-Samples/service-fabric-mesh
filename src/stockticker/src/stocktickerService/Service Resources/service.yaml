@@ -1,0 +1,26 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview1
+  name: stocktickerApp
+  properties:
+    services:
+      - name: stocktickerService
+        properties:
+          description: A web service that serves the stock price information for the symbols given in the settings.
+          osType: Windows
+          codePackages:
+            - name: stocktickerService
+              image: stocktickerservice:dev
+              endpoints:
+                - name: stocktickerServiceListener
+                  port: 8080
+              environmentVariables:
+                - name: ASPNETCORE_URLS
+                  value: http://+:8080
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 0.5
+          replicaCount: 1
+          networkRefs:
+            - name: stocktickerAppNetwork
