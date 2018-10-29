@@ -17,7 +17,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         private ReaderWriterLockSlim dataLock;
         private Task dataRefresher;
         private CancellationTokenSource cts;
-        private readonly string alphaVantageUriFormat = @"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey=meshdemo";
+        private readonly string iexTradingUriFormat = @"https://api.iextrading.com/1.0/stock/{0}/quote";
 
         public StockTicker()
         {
@@ -26,7 +26,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         public void Open()
         {
             this.httpClient = new HttpClient();
-            this.refreshInterval = TimeSpan.FromSeconds(30); // The alphavantage api only allows ~4 calls per minute
+            this.refreshInterval = TimeSpan.FromSeconds(10);
             this.stockData = new List<StockData>();
             this.dataLock = new ReaderWriterLockSlim();
             this.cts = new CancellationTokenSource();
@@ -104,7 +104,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
                     return data;
                 }
 
-                data.LastKnownValue = this.GetStockPrice(await response.Content.ReadAsStringAsync());
+                this.ParseStockData(await response.Content.ReadAsStringAsync(), ref data);
                 Console.WriteLine("symbol : {0} price : {1}", data.Symbol, data.LastKnownValue);
             }
             catch (Exception e)
@@ -118,56 +118,29 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
 
         private Uri GetStockQuoteUri(string symbol)
         {
-            return new Uri(string.Format(this.alphaVantageUriFormat, symbol));
+            return new Uri(string.Format(this.iexTradingUriFormat, symbol));
         }
 
         //
         // Data is of the form
-        //        {
-        //    "Global Quote": {
-        //        "01. symbol": "^DJI",
-        //        "02. open": "24770.2500",
-        //        "03. high": "24916.1600",
-        //        "04. low": "24445.1900",
-        //        "05. price": "24688.3100",
-        //        "06. volume": "505313987",
-        //        "07. latest trading day": "2018-10-26",
-        //        "08. previous close": "24984.5500",
-        //        "09. change": "-296.2402",
-        //        "10. change percent": "-1.1857%"
-        //         }
-        //      }
+        //{"symbol":"MSFT","companyName":"Microsoft Corporation","primaryExchange":"Nasdaq Global Select","sector":"Technology","calculationPrice":"close","open":105.63,"openTime":1540560600514,"close":106.96,"closeTime":1540584000410,"high":108.75,"low":104.76,"latestPrice":106.96,"latestSource":"Close","latestTime":"October 26, 2018","latestUpdate":1540584000410,"latestVolume":55471497,"iexRealtimePrice":null,"iexRealtimeSize":null,"iexLastUpdated":null,"delayedPrice":106.96,"delayedPriceTime":1540584000410,"extendedPrice":107,"extendedChange":0.04,"extendedChangePercent":0.00037,"extendedPriceTime":1540587388338,"previousClose":108.3,"change":-1.34,"changePercent":-0.01237,"iexMarketPercent":null,"iexVolume":null,"avgTotalVolume":34188213,"iexBidPrice":null,"iexBidSize":null,"iexAskPrice":null,"iexAskSize":null,"marketCap":821048356003,"peRatio":28.68,"week52High":116.18,"week52Low":80.7,"ytdChange":0.24817183499818496}
         //
-        private string GetStockPrice(string rawString)
+        private class Quote
         {
-            var jObject = JObject.Parse(rawString);
-            foreach (var token in jObject)
-            {
-                if (token.Key.Contains("Global Quote"))
-                {
-                    if (token.Value.Type == JTokenType.Object)
-                    {
-                        var innerObject = (JObject)token.Value;
-                        foreach (var innerToken in innerObject)
-                        {
-                            if (innerToken.Key.Contains("05. price"))
-                            {
-                                if (innerToken.Value.Type == JTokenType.String)
-                                {
-                                    return innerToken.Value.ToString();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            public string companyName;
+            public string latestPrice;
+        }
 
-            return null;
+        private void ParseStockData(string rawString, ref StockData data)
+        {
+            var quote = JsonConvert.DeserializeObject<Quote>(rawString);
+            data.CompanyName = quote.companyName;
+            data.LastKnownValue = quote.latestPrice;
         }
 
         private string[] GetSymbols()
         {
-            return new string[] { "DJI", "MSFT" };
+            return new string[] { "MSFT", "GOOG", "AAPL" };
         }
 
         #region IDisposable Support

@@ -7,6 +7,7 @@
         }
 
         public string Symbol;
+        public string CompanyName;
         public string LastKnownValue;
     }
 

@@ -28,7 +28,7 @@ function onNewDataReceived(jsonString) {
         str = "";
         for (var i=0; i<jsonData.length; i++)
         {
-            str = str + jsonData[i].Symbol + "  :  " + jsonData[i].LastKnownValue;
+            str = str + jsonData[i].CompanyName + "  :  " + jsonData[i].LastKnownValue;
             str = str + "<br>";
         }
         document.getElementById("data").innerHTML = "" + str;
