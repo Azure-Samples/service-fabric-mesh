@@ -26,7 +26,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         public void Open()
         {
             this.httpClient = new HttpClient();
-            this.refreshInterval = TimeSpan.FromSeconds(15); // The alphavantage api only allows 5 calls per minute
+            this.refreshInterval = TimeSpan.FromSeconds(30); // The alphavantage api only allows ~4 calls per minute
             this.stockData = new List<StockData>();
             this.dataLock = new ReaderWriterLockSlim();
             this.cts = new CancellationTokenSource();
