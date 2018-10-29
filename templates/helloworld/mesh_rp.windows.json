@@ -27,8 +27,7 @@
       "name": "helloWorldGatewayWindows",
       "type": "Microsoft.ServiceFabricMesh/gateways",
       "location": "[parameters('location')]",
-      "tags": {  
-      },
+      "tags": {},
       "dependsOn": [
         "Microsoft.ServiceFabricMesh/networks/helloWorldNetworkWindows"
       ],
@@ -104,5 +103,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('helloWorldGatewayWindows').ipAddress]",
+      "type": "string"
+    }
+  }
 }
