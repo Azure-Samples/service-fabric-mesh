@@ -17,10 +17,15 @@ application:
               environmentVariables:
                 - name: ASPNETCORE_URLS
                   value: http://+:8080
+              settings:
+                - name: tickers
+                  value: "MSFT,AMZN,GOOG"
               resources:
                 requests:
-                  cpu: 0.5
+                  cpu: 1
                   memoryInGB: 0.5
           replicaCount: 1
           networkRefs:
             - name: stocktickerAppNetwork
+              endpointRefs:
+                - name: stocktickerServiceListener

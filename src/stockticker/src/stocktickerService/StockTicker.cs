@@ -1,4 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿// ------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -6,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
 {
@@ -18,6 +24,11 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         private Task dataRefresher;
         private CancellationTokenSource cts;
         private readonly string iexTradingUriFormat = @"https://api.iextrading.com/1.0/stock/{0}/quote";
+	private readonly string[] defaultTickers = { "MSFT", " AAPL ", "GOOG"};
+	private const string tickerFileLinux = @"/var/settings/tickers";
+	private const string tickerFileWindows = @"c:\settings\tickers";
+        private const string tickerDataRefreshIntervalEnvVar = "DATA_REFRESH_INTERVAL_SECONDS";
+        private const string tickerDisplayUpdateIntervalEnvVar = "DISPLAY_REFRESH_INTERVAL_SECONDS";
 
         public StockTicker()
         {
@@ -26,11 +37,11 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         public void Open()
         {
             this.httpClient = new HttpClient();
-            this.refreshInterval = TimeSpan.FromSeconds(10);
+            this.refreshInterval = this.GetIntervalFromEnvVar(tickerDataRefreshIntervalEnvVar, 10);
             this.stockData = new List<StockData>();
             this.dataLock = new ReaderWriterLockSlim();
             this.cts = new CancellationTokenSource();
-            this.UpdateInterval = TimeSpan.FromSeconds(5);
+            this.UpdateInterval = this.GetIntervalFromEnvVar(tickerDisplayUpdateIntervalEnvVar, 5);
             this.dataRefresher = Task.Run(() => this.RefreshStockData(this.cts.Token));
         }
 
@@ -117,7 +128,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
 
         private Uri GetStockQuoteUri(string symbol)
         {
-            return new Uri(string.Format(this.iexTradingUriFormat, symbol));
+            return new Uri(string.Format(this.iexTradingUriFormat, symbol.Trim()));
         }
 
         //
@@ -126,6 +137,12 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
         //
         private class Quote
         {
+            public Quote()
+            {
+                this.companyName = "";
+                this.latestPrice = "";
+            }
+
             public string companyName;
             public string latestPrice;
         }
@@ -139,7 +156,53 @@ namespace Microsoft.ServiceFabricMesh.Samples.Stockticker.Service
 
         private string[] GetSymbols()
         {
-            return new string[] { "MSFT", "GOOG", "AAPL" };
+            string tickerFile;
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+	    {
+                tickerFile = tickerFileLinux;
+            }
+            else
+            {
+                tickerFile = tickerFileWindows;
+            }
+
+            if (!File.Exists(tickerFile))
+            {
+                return defaultTickers;
+            }
+
+            return this.ReadTickerFile(tickerFile);
+        }
+
+        private string[] ReadTickerFile(string tickerFile)
+        {
+            try
+            {
+                // The contents of the file are comma separated list of symbols
+                var tickerFileContents = File.ReadAllText(tickerFile);
+                if (String.IsNullOrEmpty(tickerFileContents))
+                {
+                    return new string[]{};
+                }
+
+                return tickerFileContents.Split(',');
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Caught exception during ReadTickerFile {0} : exception {1}", tickerFile, e);
+            }
+
+            return new string[]{};
+        }
+
+        private TimeSpan GetIntervalFromEnvVar(string varName, int defaultValueInSeconds)
+        {
+            if (!int.TryParse(Environment.GetEnvironmentVariable(varName), out int interval))
+            {
+                interval = defaultValueInSeconds;
+            }
+
+            return TimeSpan.FromSeconds(interval);
         }
 
         #region IDisposable Support
