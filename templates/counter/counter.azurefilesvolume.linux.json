@@ -86,9 +86,43 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "counterServiceListener"
+                    }
+                  ]  
                 }
               ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "CounterAppGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/counterAppNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for counter sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "counterApp",
+              "serviceName": "counterService",
+              "endpointName": "counterServiceListener"
             }
           }
         ]
@@ -101,19 +135,9 @@
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
+        "kind": "Local",
         "description": "Azure Service Fabric Mesh Counter Application network.",
-        "addressPrefix": "10.0.0.4/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "counterServiceIngress",
-              "publicPort": "80",
-              "applicationName": "counterApp",
-              "serviceName": "counterService",
-              "endpointName": "counterServiceListener"
-            }
-          ]
-        }
+        "NetworkAddressPrefix": "2.0.0.4/22"
       }
     },
     {
@@ -132,5 +156,11 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+        "value" : "[reference('CounterAppGateway').ipAddress]",
+        "type": "string"
+    }
+  }
 }
