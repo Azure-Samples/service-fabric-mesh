@@ -66,7 +66,7 @@
     },
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "helloWorldGateway",
+      "name": "helloWorldPrivateRegistryGateway",
       "type": "Microsoft.ServiceFabricMesh/gateways",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -133,16 +133,6 @@
                       "memoryInGB": "1"
                     }
                   }
-                },
-                {
-                  "name": "helloWorldSideCar",
-                  "image": "seabreeze/azure-mesh-helloworld-sidecar:1.0-alpine",
-                  "resources": {
-                    "requests": {
-                      "cpu": "1",
-                      "memoryInGB": "1"
-                    }
-                  }
                 }
               ],
               "replicaCount": "1",
@@ -161,5 +151,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('helloWorldPrivateRegistryGateway').ipAddress]",
+      "type": "string"
+    }
+  }
 }
