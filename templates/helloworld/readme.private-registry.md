@@ -86,6 +86,8 @@ When the registry is created, you'll see output similar to the following:
 
 To push an image to an Azure container registry (ACR), you must first have a container image. If you don't yet have any local container images, run the following command to pull the an image from Docker Hub (you may need to switch Docker to work with Linux images by right-clicking the docker icon and selecting **Switch to Linux containers**).
 
+If you are deploying Windows application, please use Windows image `seabreeze/azure-mesh-helloworld:1.1-windowsservercore-1709`.
+
 ```bash
 docker pull seabreeze/azure-mesh-helloworld:1.1-alpine
 ```
@@ -157,7 +159,7 @@ Result
 1.1-alpine
 ```
 
-The preceding output confirms the presence of `azure-mesh-helloworld:1.1-alpine` in the private container registry. If you are deploying Windows application, please perform the above steps with Windows image `azure-mesh-helloworld:1
+The preceding output confirms the presence of `azure-mesh-helloworld:1.1-alpine` in the private container registry. .
 
 ## Retrieve credentials for the registry
 
