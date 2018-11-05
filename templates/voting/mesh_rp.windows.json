@@ -18,7 +18,7 @@
       "dependsOn": [],
       "properties": {
         "description": "VotingAppNetwork description.",
-        "addressPrefix": "10.0.0.4/22",
+        "addressPrefix": "10.0.0.0/22",
         "ingressConfig": {
           "layer4": [
             {
