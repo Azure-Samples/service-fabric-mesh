@@ -101,7 +101,7 @@
       "dependsOn": [],
       "properties": {
         "description": "Azure Service Fabric Mesh Counter Application network.",
-        "addressPrefix": "10.0.0.4/22",
+        "addressPrefix": "10.0.0.0/22",
         "ingressConfig": {
           "layer4": [
             {
