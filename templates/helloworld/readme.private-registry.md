@@ -102,7 +102,7 @@ az acr list --resource-group myResourceGroup --query "[].{acrLoginServer:loginSe
 
 The full login server name that is returned will be referred to as `<acrLoginServer>` throughout the rest of this article.
 
-Now tag your docker image using the [docker tag][docker-tag] command. In the command below, replace `<acrLoginServer>` with the login server name reported by the command above. The following example tags the seabreeze/azure-mesh-helloworld:1.1-alpine image. If you are using a different image, substitute the image name in the following command.
+Now tag your docker image using the `docker tag` command. In the command below, replace `<acrLoginServer>` with the login server name reported by the command above. The following example tags the seabreeze/azure-mesh-helloworld:1.1-alpine image. If you are using a different image, substitute the image name in the following command.
 
 ```bash
 docker tag seabreeze/azure-mesh-helloworld:1.1-alpine <acrLoginServer>/seabreeze/azure-mesh-helloworld:1.1-alpine
