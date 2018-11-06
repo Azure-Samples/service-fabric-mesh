@@ -19,32 +19,32 @@
     "resources": [
       {
         "apiVersion": "2018-09-01-preview",
-        "name": "counterAppLinux",
+        "name": "sfVolCounterAppWindows",
         "type": "Microsoft.ServiceFabricMesh/applications",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "Microsoft.ServiceFabricMesh/networks/counterAppLinuxNetwork"
+          "Microsoft.ServiceFabricMesh/networks/sfVolCounterAppWindowsNetwork"
         ],
         "properties": {
-          "description": "Azure Service Fabric Mesh Counter Application using SFVolumeDisk.",
+          "description": "Azure Service Fabric Mesh sample counter application using SF Volume Disk",
           "services": [
             {
               "name": "counterService",
               "properties": {
-                "description": "A web service that serves the counter value stored in SFVolumeDisk.",
-                "osType": "Linux",
+              "description": "A web service that serves the counter value stored in the Service Fabric volume disk.",
+                "osType": "windows",
                 "codePackages": [
                   {
                     "name": "counterService",
-                    "image": "seabreeze/azure-mesh-counter:0.1-alpine",
+                    "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
                     "volumes": [
                       {
-                        "name": "myvol",
+                        "name": "sfvol",
                         "creationParameters": {
                           "kind": "ServiceFabricVolumeDisk",
                           "sizeDisk": "Small"
                         },
-                        "destinationPath": "/app/data"
+                        "destinationPath": "C:\\app\\data"
                       }
                     ],
                     "endpoints": [
@@ -70,7 +70,7 @@
                 "replicaCount": 1,
                 "networkRefs": [
                   {
-                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppLinuxNetwork')]"
+                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppWindowsNetwork')]"
                   }
                 ]
               }
@@ -80,7 +80,7 @@
       },
       {
         "apiVersion": "2018-09-01-preview",
-        "name": "counterAppLinuxNetwork",
+        "name": "sfVolCounterAppWindowsNetwork",
         "type": "Microsoft.ServiceFabricMesh/networks",
         "location": "[parameters('location')]",
         "dependsOn": [],
@@ -92,7 +92,7 @@
               {
                 "name": "counterServiceIngress",
                 "publicPort": "80",
-                "applicationName": "counterAppLinux",
+                "applicationName": "sfVolCounterAppWindows",
                 "serviceName": "counterService",
                 "endpointName": "counterServiceListener"
               }
