@@ -17,19 +17,38 @@
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "description": "Service Fabric Mesh network for HelloWorld sample.",
-        "addressPrefix": "10.0.0.4/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "helloWorldIngress",
-              "publicPort": "80",
+        "kind": "Local",
+        "description": "Service Fabric Mesh Network for HelloWorld sample.",
+        "networkAddressPrefix": "2.0.0.0/16"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/helloWorldNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for HelloWorld sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
               "applicationName": "helloWorldApp",
               "serviceName": "helloWorldService",
               "endpointName": "helloWorldListener"
             }
-          ]
-        }
+          }
+        ]
       }
     },
     {
@@ -41,11 +60,10 @@
         "Microsoft.ServiceFabricMesh/networks/helloWorldNetwork"
       ],
       "properties": {
-        "description": "Service Fabric Mesh HelloWorld application.",
+        "description": "Service Fabric Mesh HelloWorld Application.",
         "services": [
           {
             "type": "Microsoft.ServiceFabricMesh/services",
-            "location": "[parameters('location')]",
             "name": "helloWorldService",
             "properties": {
               "description": "Service Fabric Mesh Hello World Service.",
@@ -81,7 +99,12 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "helloWorldListener"
+                    }
+                  ]
                 }
               ]
             }
@@ -89,5 +112,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('helloWorldGateway').ipAddress]",
+      "type": "string"
+    }
+  }
 }

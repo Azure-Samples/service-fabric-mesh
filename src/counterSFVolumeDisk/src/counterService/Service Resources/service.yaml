@@ -1,0 +1,34 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppSFVD
+  properties:
+    services:
+      - name: counterServiceSFVD
+        properties:
+          description: A web service that serves the counter value stored in the SF Files volume.
+          osType: Windows
+          codePackages:
+            - name: counterServiceSFVD
+              image: counterservicesfvd:dev
+              endpoints:
+                - name: counterServiceSFVDListener
+                  port: 8080
+              volumes:
+                - name: volume
+                  creationParameters:
+                    kind: ServiceFabricVolumeDisk
+                    sizeDisk: Small
+                  destinationPath: C:\data
+              environmentVariables:
+                - name: ASPNETCORE_URLS
+                  value: http://+:8080
+                - name: STORE_ROOT
+                  value: c:\data
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 0.5
+          replicaCount: 1
+          networkRefs:
+            - name: counterAppNetworkSFVD

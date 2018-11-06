@@ -30,7 +30,7 @@
   "resources": [
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "hellowWorld_acr_password",
+      "name": "helloWorldPrivateRegistryPassword",
       "type": "Microsoft.ServiceFabricMesh/secrets",
       "location": "[parameters('location')]",
       "dependsOn": [],
@@ -42,11 +42,11 @@
     },
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "hellowWorld_acr_password/v1",
+      "name": "helloWorldPrivateRegistryPassword/v1",
       "type": "Microsoft.ServiceFabricMesh/secrets/values",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/secrets/hellowWorld_acr_password"
+        "Microsoft.ServiceFabricMesh/secrets/helloWorldPrivateRegistryPassword"
       ],
       "properties": {
         "value": "[parameters('registry-password')]"
@@ -59,18 +59,38 @@
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "addressPrefix": "10.0.0.4/22",
-        "description": "Service Fabric Mesh network for HelloWorld sample with private registry support.",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "publicPort": "80",
+        "kind": "Local",
+        "description": "Service Fabric Mesh Network for HelloWorld sample deployed from private registry.",
+        "networkAddressPrefix": "2.0.0.0/16"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldPrivateRegistryGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for HelloWorld sample deployed from private registry.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
               "applicationName": "helloWorldPrivateRegistryApp",
               "serviceName": "helloWorldService",
               "endpointName": "helloWorldListener"
             }
-          ]
-        }
+          }
+        ]
       }
     },
     {
@@ -80,7 +100,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork",
-        "Microsoft.ServiceFabricMesh/secrets/hellowWorld_acr_password/values/v1"
+        "Microsoft.ServiceFabricMesh/secrets/helloWorldPrivateRegistryPassword/values/v1"
       ],
       "properties": {
         "description": "Service Fabric Mesh HelloWorld application with container deployed from private registry.",
@@ -99,7 +119,7 @@
                   "imageRegistryCredential": {
                     "server": "[parameters('registry-server')]",
                     "username": "[parameters('registry-username')]",
-                    "password": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','hellowWorld_acr_password','v1')]"
+                    "password": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','helloWorldPrivateRegistryPassword','v1')]"
                   },
                   "endpoints": [
                     {
@@ -118,7 +138,12 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "helloWorldListener"
+                    }
+                  ]
                 }
               ]
             }
@@ -126,5 +151,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('helloWorldPrivateRegistryGateway').ipAddress]",
+      "type": "string"
+    }
+  }
 }
