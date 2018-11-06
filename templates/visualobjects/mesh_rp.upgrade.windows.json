@@ -57,7 +57,7 @@
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/visualObjectsNetwork"
+        "Microsoft.ServiceFabricMesh/networks/visualObjectsNetworkWindows"
       ],
       "properties": {
         "description": "Service Fabric Mesh Visual Objects Application!",
