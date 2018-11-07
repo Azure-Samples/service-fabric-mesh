@@ -1,104 +1,135 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "location": {
-        "type": "string",
-        "metadata": {
-          "description": "Location of the resources (e.g. westus, eastus, westeurope)."
-        }
-      },
-      "stateFolderName": {
-        "type": "string",
-        "defaultValue": "CounterService",
-        "metadata": {
-          "description": "Folder in which to store the state. Provide a empty value to create a unique folder for each container to store the state. A non-empty value will retain the state across deployments, however if more than one applications are using the same folder, the counter may update more frequently."
-        }
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
       }
     },
-    "resources": [
-      {
-        "apiVersion": "2018-09-01-preview",
-        "name": "sfVolCounterAppWindows",
-        "type": "Microsoft.ServiceFabricMesh/applications",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "Microsoft.ServiceFabricMesh/networks/sfVolCounterAppWindowsNetwork"
-        ],
-        "properties": {
-          "description": "Azure Service Fabric Mesh sample counter application using SF Volume Disk",
-          "services": [
-            {
-              "name": "counterService",
-              "properties": {
+    "stateFolderName": {
+      "type": "string",
+      "defaultValue": "CounterService",
+      "metadata": {
+        "description": "Folder in which to store the state. Provide a empty value to create a unique folder for each container to store the state. A non-empty value will retain the state across deployments, however if more than one applications are using the same folder, the counter may update more frequently."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "sfVolCounterAppWindowsNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Azure Service Fabric Mesh Counter Application network.",
+        "networkaddressprefix": "2.0.0.0/16"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "sfVolCounterWindowsGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/sfVolCounterAppWindowsNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for Counter sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppWindowsNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "sfVolCounterAppWindows",
+              "serviceName": "counterService",
+              "endpointName": "counterServiceListener"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "sfVolCounterAppWindows",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/sfVolCounterAppWindowsNetwork"
+      ],
+      "properties": {
+        "description": "Azure Service Fabric Mesh sample counter application using SF Volume Disk",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "name": "counterService",
+            "properties": {
               "description": "A web service that serves the counter value stored in the Service Fabric volume disk.",
-                "osType": "windows",
-                "codePackages": [
-                  {
-                    "name": "counterService",
-                    "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
-                    "volumes": [
-                      {
-                        "name": "sfvol",
-                        "creationParameters": {
-                          "kind": "ServiceFabricVolumeDisk",
-                          "sizeDisk": "Small"
-                        },
-                        "destinationPath": "C:\\app\\data"
-                      }
-                    ],
-                    "endpoints": [
-                      {
-                        "name": "counterServiceListener",
-                        "port": 80
-                      }
-                    ],
-                    "environmentVariables": [
-                      {
-                        "name": "STATE_FOLDER_NAME",
-                        "value": "[parameters('stateFolderName')]"
-                      }
-                    ],
-                    "resources": {
-                      "requests": {
-                        "cpu": 0.5,
-                        "memoryInGB": 0.5
-                      }
+              "osType": "windows",
+              "codePackages": [
+                {
+                  "name": "counterCode",
+                  "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
+                  "volumes": [ 
+                    { 
+                      "name": "sfvol", 
+                      "creationParameters": { 
+                        "kind": "ServiceFabricVolumeDisk", 
+                        "sizeDisk": "Small" 
+                      }, 
+                      "destinationPath": "C:\\app\\data"
+                    } 
+                  ],
+                  "endpoints": [
+                    {
+                      "name": "counterServiceListener",
+                      "port": "80"
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "STATE_FOLDER_NAME",
+                      "value": "[parameters('stateFolderName')]"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": 0.5,
+                      "memoryInGB": 0.5
                     }
                   }
-                ],
-                "replicaCount": 1,
-                "networkRefs": [
-                  {
-                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppWindowsNetwork')]"
-                  }
-                ]
-              }
+                }
+              ],
+              "replicaCount": 1,
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppWindowsNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "counterServiceListener"
+                    }
+                  ]
+                }
+              ]
             }
-          ]
-        }
-      },
-      {
-        "apiVersion": "2018-09-01-preview",
-        "name": "sfVolCounterAppWindowsNetwork",
-        "type": "Microsoft.ServiceFabricMesh/networks",
-        "location": "[parameters('location')]",
-        "dependsOn": [],
-        "properties": {
-          "description": "Azure Service Fabric Mesh Counter Application network.",
-          "addressPrefix": "10.0.0.4/22",
-          "ingressConfig": {
-            "layer4": [
-              {
-                "name": "counterServiceIngress",
-                "publicPort": "80",
-                "applicationName": "sfVolCounterAppWindows",
-                "serviceName": "counterService",
-                "endpointName": "counterServiceListener"
-              }
-            ]
           }
-        }
+        ]
       }
-    ]
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('sfVolCounterWindowsGateway').ipAddress]",
+      "type": "string"
+    }
   }
+}

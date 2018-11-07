@@ -19,6 +19,47 @@
   "resources": [
     {
       "apiVersion": "2018-09-01-preview",
+      "name": "sfVolCounterAppNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Azure Service Fabric Mesh Counter Application network.",
+        "networkaddressprefix": "2.0.0.0/16"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "sfVolCounterGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/sfVolCounterAppNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for Counter sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "sfVolCounterApp",
+              "serviceName": "counterService",
+              "endpointName": "counterServiceListener"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
       "name": "sfVolCounterApp",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
@@ -29,13 +70,14 @@
         "description": "Azure Service Fabric Mesh sample counter application using SF Volume Disk",
         "services": [
           {
+            "type": "Microsoft.ServiceFabricMesh/services",
             "name": "counterService",
             "properties": {
               "description": "A web service that serves the counter value stored in the Service Fabric volume disk.",
               "osType": "linux",
               "codePackages": [
                 {
-                  "name": "counterService",
+                  "name": "counterCode",
                   "image": "seabreeze/azure-mesh-counter:0.1-alpine",
                   "volumes": [ 
                     { 
@@ -50,7 +92,7 @@
                   "endpoints": [
                     {
                       "name": "counterServiceListener",
-                      "port": 80
+                      "port": "80"
                     }
                   ],
                   "environmentVariables": [
@@ -70,35 +112,24 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'sfVolCounterAppNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "counterServiceListener"
+                    }
+                  ]
                 }
               ]
             }
           }
         ]
       }
-    },
-    {
-      "apiVersion": "2018-09-01-preview",
-      "name": "sfVolCounterAppNetwork",
-      "type": "Microsoft.ServiceFabricMesh/networks",
-      "location": "[parameters('location')]",
-      "dependsOn": [],
-      "properties": {
-        "description": "Azure Service Fabric Mesh Counter Application network.",
-        "addressPrefix": "10.0.0.4/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "counterServiceIngress",
-              "publicPort": "80",
-              "applicationName": "sfVolCounterApp",
-              "serviceName": "counterService",
-              "endpointName": "counterServiceListener"
-            }
-          ]
-        }
-      }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('sfVolCounterGateway').ipAddress]",
+      "type": "string"
+    }
+  }
 }
