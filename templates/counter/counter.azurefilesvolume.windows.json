@@ -44,11 +44,11 @@
       "properties": {
         "kind": "Local",
         "description": "Azure Service Fabric Mesh Counter Application network.",
-        "networkaddressprefix": "2.0.0.0/16"
+        "networkaddressprefix": "10.0.0.0/24"
       }
     },
     {
-    "apiVersion": "2018-09-01-preview",
+      "apiVersion": "2018-09-01-preview",
       "name": "counterWindowsGateway",
       "type": "Microsoft.ServiceFabricMesh/gateways",
       "location": "[parameters('location')]",
