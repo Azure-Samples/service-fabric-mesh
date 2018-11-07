@@ -1,0 +1,193 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
+      }
+    },
+    "stateFolderName": {
+      "type": "string",
+      "defaultValue": "CounterService",
+      "metadata": {
+        "description": "Folder in which to store the state. Provide a empty value to create a unique folder for each container to store the state. A non-empty value will retain the state across deployments, however if more than one applications are using the same folder, the counter may update more frequently."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "meshNetworkWindows",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Service Fabric Mesh Network.",
+        "networkAddressPrefix": "10.0.0.0/24"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "ingressGatewayWindows",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/meshNetworkWindows"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for Windows mesh samples.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'meshNetworkWindows')]"
+        },
+        "http": [
+          {
+            "name": "web",
+            "port": 80,
+            "hosts": [
+              {
+                "name": "*",
+                "routes": [
+                  {
+                    "match": {
+                      "path": {
+                        "value": "/hello",
+                        "rewrite": "/",
+                        "type": "Prefix"
+                      }
+                    },
+                    "destination": {
+                      "applicationName": "meshAppWindows",
+                      "serviceName": "helloWorldService",
+                      "endpointName": "helloWorldListener"
+                    }
+                  },
+                  {
+                    "match": {
+                      "path": {
+                        "value": "/counter",
+                        "rewrite": "/",
+                        "type": "Prefix"
+                      }
+                    },
+                    "destination": {
+                      "applicationName": "meshAppWindows",
+                      "serviceName": "counterService",
+                      "endpointName": "counterServiceListener"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "meshAppWindows",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/meshNetworkWindows"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh sample Application.",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "name": "helloWorldService",
+            "properties": {
+              "description": "Service Fabric Mesh Hello World Service.",
+              "osType": "windows",
+              "codePackages": [
+                {
+                  "name": "helloWorldCode",
+                  "image": "seabreeze/azure-mesh-helloworld:1.1-windowsservercore-1709",
+                  "endpoints": [
+                    {
+                      "name": "helloWorldListener",
+                      "port": "80"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memoryInGB": "1"
+                    }
+                  }
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'meshNetworkWindows')]",
+                  "endpointRefs": [
+                    {
+                      "name": "helloWorldListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "counterService",
+            "properties": {
+              "description": "A web service that serves the counter value stored in the Azure Files volume.",
+              "osType": "windows",
+              "codePackages": [
+                {
+                  "name": "counterService",
+                  "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
+                  "endpoints": [
+                    {
+                      "name": "counterServiceListener",
+                      "port": 80
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "STATE_FOLDER_NAME",
+                      "value": "[parameters('stateFolderName')]"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": 0.5,
+                      "memoryInGB": 0.5
+                    }
+                  }
+                }
+              ],
+              "replicaCount": 1,
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'meshNetworkWindows')]",
+                  "endpointRefs": [
+                    {
+                      "name": "counterServiceListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('ingressGatewayWindows').ipAddress]",
+      "type": "string"
+    }
+  }
+}
