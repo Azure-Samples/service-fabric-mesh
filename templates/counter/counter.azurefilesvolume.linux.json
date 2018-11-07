@@ -38,11 +38,65 @@
   "resources": [
     {
       "apiVersion": "2018-09-01-preview",
+      "name": "counterAzureFileShareAccountKey",
+      "type": "Microsoft.ServiceFabricMesh/secrets",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "inlinedValue",
+        "contentType": "text/plain",
+        "description": "Access key for the Azure storage account that contains the file share."
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterAzureFileShareAccountKey/v1",
+      "type": "Microsoft.ServiceFabricMesh/secrets/values",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/counterAzureFileShareAccountKey"
+      ],
+      "properties": {
+        "value": "[parameters('storageAccountKey')]"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterVolume",
+      "type": "Microsoft.ServiceFabricMesh/volumes",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/counterAzureFileShareAccountKey/values/v1"
+      ],
+      "properties": {
+        "description": "Azure Files storage volume for counter App.",
+        "provider": "SFAzureFile",
+        "azureFileParameters": {
+          "shareName": "[parameters('fileShareName')]",
+          "accountName": "[parameters('storageAccountName')]",
+          "accountKey": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','counterAzureFileShareAccountKey','v1')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Azure Service Fabric Mesh Counter Application network.",
+        "networkAddressPrefix": "10.0.0.0/24"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
       "name": "counterApp",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/counterAppNetwork",
+        "Microsoft.ServiceFabricMesh/networks/counterNetwork",
         "Microsoft.ServiceFabricMesh/volumes/counterVolume"
       ],
       "properties": {
@@ -55,7 +109,7 @@
               "osType": "linux",
               "codePackages": [
                 {
-                  "name": "counterService",
+                  "name": "counterCode",
                   "image": "seabreeze/azure-mesh-counter:0.1-alpine",
                   "volumeRefs": [
                     {
@@ -86,12 +140,12 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]",
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterNetwork')]",
                   "endpointRefs": [
                     {
                       "name": "counterServiceListener"
                     }
-                  ]  
+                  ]
                 }
               ]
             }
@@ -101,11 +155,11 @@
     },
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "CounterAppGateway",
+      "name": "counterGateway",
       "type": "Microsoft.ServiceFabricMesh/gateways",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/counterAppNetwork"
+        "Microsoft.ServiceFabricMesh/networks/counterNetwork"
       ],
       "properties": {
         "description": "Service Fabric Mesh Gateway for counter sample.",
@@ -113,7 +167,7 @@
           "name": "Open"
         },
         "destinationNetwork": {
-          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppNetwork')]"
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterNetwork')]"
         },
         "tcp": [
           {
@@ -127,40 +181,12 @@
           }
         ]
       }
-    },
-    {
-      "apiVersion": "2018-09-01-preview",
-      "name": "counterAppNetwork",
-      "type": "Microsoft.ServiceFabricMesh/networks",
-      "location": "[parameters('location')]",
-      "dependsOn": [],
-      "properties": {
-        "kind": "Local",
-        "description": "Azure Service Fabric Mesh Counter Application network.",
-        "networkAddressPrefix": "10.0.0.0/24"
-      }
-    },
-    {
-      "apiVersion": "2018-09-01-preview",
-      "name": "counterVolume",
-      "type": "Microsoft.ServiceFabricMesh/volumes",
-      "location": "[parameters('location')]",
-      "dependsOn": [],
-      "properties": {
-        "description": "Azure Files storage volume for counter App.",
-        "provider": "SFAzureFile",
-        "azureFileParameters": {
-          "shareName": "[parameters('fileShareName')]",
-          "accountName": "[parameters('storageAccountName')]",
-          "accountKey": "[parameters('storageAccountKey')]"
-        }
-      }
     }
   ],
   "outputs": {
     "publicIPAddress": {
-        "value" : "[reference('CounterAppGateway').ipAddress]",
-        "type": "string"
+      "value": "[reference('counterGateway').ipAddress]",
+      "type": "string"
     }
   }
 }
