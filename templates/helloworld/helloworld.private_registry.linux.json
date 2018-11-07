@@ -61,7 +61,7 @@
       "properties": {
         "kind": "Local",
         "description": "Service Fabric Mesh Network for HelloWorld sample deployed from private registry.",
-        "networkAddressPrefix": "2.0.0.0/16"
+        "networkAddressPrefix": "10.0.0.0/24"
       }
     },
     {
