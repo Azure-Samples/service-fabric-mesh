@@ -20,7 +20,7 @@
       "properties": {
         "kind": "Local",
         "description": "Service Fabric Mesh Visual Objects network!",
-        "networkAddressPrefix": "2.0.0.4/22"
+        "networkAddressPrefix": "2.0.0.0/22"
       }
     },
     {
