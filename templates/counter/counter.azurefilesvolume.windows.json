@@ -106,7 +106,7 @@
             "name": "counterService",
             "properties": {
               "description": "A web service that serves the counter value stored in the Azure Files volume.",
-              "osType": "linux",
+              "osType": "windows",
               "codePackages": [
                 {
                   "name": "counterCode",
