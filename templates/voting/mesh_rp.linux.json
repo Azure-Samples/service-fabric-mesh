@@ -18,19 +18,38 @@
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
+        "kind": "Local",
         "description": "Voting app for Linux network",
-        "addressPrefix": "10.0.0.0/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "votingweb-ingress",
-              "publicPort": "80",
-              "applicationName": "votingapp-linux",
-              "serviceName": "votingweb",
-              "endpointName": "votingweb-listener"
+        "networkAddressPrefix": "7.0.0.0/22"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "VotingAppGateway-linux",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/votingapp-network-linux"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for Voting Application sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "VotingApp",
+              "serviceName": "VotingWeb",
+              "endpointName": "VotingWebListener"
             }
-          ]
-        }
+          }
+        ]
       }
     },
     {
@@ -42,6 +61,7 @@
         "Microsoft.ServiceFabricMesh/networks/votingapp-network-linux"
       ],
       "properties": {
+        "description": "Mesh Voting App",
         "services": [
           {
             "name": "votingdata",
@@ -75,7 +95,12 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]",
+                  "endpointRefs": [
+                    {
+                      "name": "votingdata-listener"
+                    }
+                  ]  
                 }
               ]
             }
@@ -120,7 +145,12 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingapp-network-linux')]",
+                  "endpointRefs": [
+                    {
+                      "name": "votingweb-listener"
+                    }
+                  ] 
                 }
               ]
             }
@@ -128,5 +158,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+        "value" : "[reference('VotingAppGateway-linux').ipAddress]",
+        "type": "string"
+    }
+  }
 }
