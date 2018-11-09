@@ -1,0 +1,156 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "visualObjectsNetworkLinux",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Service Fabric Mesh Voting App with Reliable Collections network!",
+        "networkAddressPrefix": "5.0.0.0/22"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "rcVotingAppGatewayLinux",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/visualObjectsNetworkLinux"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for Visual Objects sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'visualObjectsNetworkLinux')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "visualObjectsAppLinux",
+              "serviceName": "web",
+              "endpointName": "webListener"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "visualObjectsAppLinux",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/visualObjectsNetworkLinux"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Visual Objects Application!",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "web",
+            "properties": {
+              "description": "Service Fabric Mesh Visual Objects Web Service.",
+              "osType": "linux",
+              "codePackages": [
+                {
+                  "name": "web",
+                  "image": "seabreeze/azure-mesh-visualobjects-web:1.1-stretch",
+                  "endpoints": [
+                    {
+                      "name": "webListener",
+                      "port": "80"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memoryInGB": "1"
+                    }
+                  }
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'visualObjectsNetworkLinux')]",
+                  "endpointRefs": [
+                    {
+                      "name": "webListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "rcworker",
+            "properties": {
+              "description": "Service Fabric Mesh Visual Objects worker Service with reliable collections.",
+              "osType": "linux",
+              "codePackages": [
+                {
+                  "name": "rcworker",
+                  "image": "seabreeze/azure-mesh-visualobjects-rcworker:1.1-rotate-stretch",
+                  "endpoints": [
+                    {
+                      "name": "rcworkerListener",
+                      "port": 20009
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "0.5",
+                      "memoryInGB": "1"
+                    }
+                  },
+                  "reliableCollectionsRefs": [
+                    {
+                      "name": "VisualObjectCollection"
+                    }
+                  ]
+                }
+              ],
+              "replicaCount": "3",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'visualObjectsNetworkLinux')]",
+                  "endpointRefs": [
+                    {
+                      "name": "rcworkerListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+        "value" : "[reference('rcVotingAppGatewayLinux').ipAddress]",
+        "type": "string"
+    }
+  }
+}

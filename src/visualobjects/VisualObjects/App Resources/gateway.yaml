@@ -1,0 +1,17 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: VisualObjectsGateway
+  properties:
+    description: VisualObjects Gateway Resource
+    sourceNetwork:
+      name: Open
+    destinationNetwork:
+      name: VisualObjectsNetwork
+    tcp:
+    - name: tcpconfiguration
+      port: 80
+      destination:
+        applicationName: VisualObjects
+        serviceName: web
+        endpointName: webListener
+
