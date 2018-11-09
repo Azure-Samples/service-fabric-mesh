@@ -1,0 +1,16 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: RCVotingAppGateway
+  properties:
+    description: RCVotingApp Gateway Resource
+    sourceNetwork:
+      name: Open
+    destinationNetwork:
+      name: RCVotingAppNetwork
+    tcp:
+      - name: VotingDataTCP
+        port: 20009
+        destination:
+          applicationName: RCVotingApp
+          serviceName: VotingWeb
+          endpointName: VotingWebListener
