@@ -1,0 +1,192 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
+      }
+    },
+    "fileShareName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Files file share that provides the volume for the container."
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure storage account that contains the file share."
+      }
+    },
+    "storageAccountKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Access key for the Azure storage account that contains the file share."
+      }
+    },
+    "stateFolderName": {
+      "type": "string",
+      "defaultValue": "CounterService",
+      "metadata": {
+        "description": "Folder in which to store the state. Provide a empty value to create a unique folder for each container to store the state. A non-empty value will retain the state across deployments, however if more than one applications are using the same folder, the counter may update more frequently."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterAzureFileShareAccountKey",
+      "type": "Microsoft.ServiceFabricMesh/secrets",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "inlinedValue",
+        "contentType": "text/plain",
+        "description": "Access key for the Azure storage account that contains the file share."
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterAzureFileShareAccountKey/v1",
+      "type": "Microsoft.ServiceFabricMesh/secrets/values",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/counterAzureFileShareAccountKey"
+      ],
+      "properties": {
+        "value": "[parameters('storageAccountKey')]"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterVolume",
+      "type": "Microsoft.ServiceFabricMesh/volumes",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/counterAzureFileShareAccountKey/values/v1"
+      ],
+      "properties": {
+        "description": "Azure Files storage volume for counter App.",
+        "provider": "SFAzureFile",
+        "azureFileParameters": {
+          "shareName": "[parameters('fileShareName')]",
+          "accountName": "[parameters('storageAccountName')]",
+          "accountKey": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','counterAzureFileShareAccountKey','v1')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterNetworkWindows",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Azure Service Fabric Mesh Counter Application network.",
+        "networkAddressPrefix": "10.0.0.0/24"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterAppWindows",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/counterNetworkWindows",
+        "Microsoft.ServiceFabricMesh/volumes/counterVolume"
+      ],
+      "properties": {
+        "description": "Azure Service Fabric Mesh Counter Application.",
+        "services": [
+          {
+            "name": "counterService",
+            "properties": {
+              "description": "A web service that serves the counter value stored in the Azure Files volume.",
+              "osType": "windows",
+              "codePackages": [
+                {
+                  "name": "counterCode",
+                  "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
+                  "volumeRefs": [
+                    {
+                      "name": "[resourceId('Microsoft.ServiceFabricMesh/volumes', 'counterVolume')]",
+                      "destinationPath": "C:\\app\\data"
+                    }
+                  ],
+                  "endpoints": [
+                    {
+                      "name": "counterServiceListener",
+                      "port": 80
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "STATE_FOLDER_NAME",
+                      "value": "[parameters('stateFolderName')]"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": 0.5,
+                      "memoryInGB": 0.5
+                    }
+                  }
+                }
+              ],
+              "replicaCount": 1,
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterNetworkWindows')]",
+                  "endpointRefs": [
+                    {
+                      "name": "counterServiceListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterGatewayWindows",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/counterNetworkWindows"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for counter sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterNetworkWindows')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "counterAppWindows",
+              "serviceName": "counterService",
+              "endpointName": "counterServiceListener"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('counterGatewayWindows').ipAddress]",
+      "type": "string"
+    }
+  }
+}
