@@ -1,0 +1,14 @@
+## Network definition ##
+network:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppNetworkSFVD
+  properties:
+    description: Azure Service Fabric Mesh Counter Application network.
+    addressPrefix: 10.0.0.4/22
+    ingressConfig:
+      layer4:
+        - name: counterServiceIngress
+          publicPort: 8080
+          applicationName: counterAppSFVD
+          serviceName: counterServiceSFVD
+          endpointName: counterServiceSFVDListener
