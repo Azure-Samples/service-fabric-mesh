@@ -20,7 +20,7 @@
       "properties": {
         "kind": "Local",
         "description": "Service Fabric Mesh Voting App network!",
-        "networkAddressPrefix": "10.0.0.0/22"
+        "networkAddressPrefix": "10.0.0.0/24"
       }
     },
     {

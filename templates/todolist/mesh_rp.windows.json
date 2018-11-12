@@ -202,7 +202,7 @@
       "dependsOn": [],
       "properties": {
         "description": "todolistappNetwork description.",
-        "addressPrefix": "10.0.0.0/22",
+        "addressPrefix": "10.0.0.0/24",
         "ingressConfig": {
           "layer4": [
             {

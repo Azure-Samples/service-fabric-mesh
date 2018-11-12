@@ -20,7 +20,7 @@
       "properties": {
         "kind": "Local",
         "description": "Voting app for Linux network",
-        "networkAddressPrefix": "7.0.0.0/22"
+        "networkAddressPrefix": "10.0.0.0/24"
       }
     },
     {
