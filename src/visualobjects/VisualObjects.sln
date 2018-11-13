@@ -7,9 +7,11 @@ Project("{9B56FCB0-63B4-404F-8A09-42EF52B53347}") = "VisualObjects", "VisualObje
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "web", "web\web.csproj", "{AF13B73E-E661-4BBD-90A5-5FD6752E8ACA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualObjects.Common", "VisualObjects.Common\VisualObjects.Common.csproj", "{FAAA707B-1F39-4D77-B2FD-0E2BEE6F7D7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualObjects.Common", "VisualObjects.Common\VisualObjects.Common.csproj", "{FAAA707B-1F39-4D77-B2FD-0E2BEE6F7D7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "worker", "worker\worker.csproj", "{DE9FB102-B975-4841-9828-58493D68F2E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "worker", "worker\worker.csproj", "{DE9FB102-B975-4841-9828-58493D68F2E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rcworker", "rcworker\rcworker.csproj", "{DE48BF18-191B-4001-BE63-33EF60381600}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DE9FB102-B975-4841-9828-58493D68F2E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE9FB102-B975-4841-9828-58493D68F2E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE9FB102-B975-4841-9828-58493D68F2E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE48BF18-191B-4001-BE63-33EF60381600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE48BF18-191B-4001-BE63-33EF60381600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE48BF18-191B-4001-BE63-33EF60381600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE48BF18-191B-4001-BE63-33EF60381600}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

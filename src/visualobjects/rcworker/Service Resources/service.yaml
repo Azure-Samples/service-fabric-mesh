@@ -1,0 +1,30 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview2
+  name: VisualObjects
+  properties:
+    services:
+      - name: rcworker
+        properties:
+          description: rcworker description.
+          osType: Windows
+          codePackages:
+            - name: rcworker
+              image: rcworker:dev
+              endpoints:
+                - name: workerListener
+                  port: 20009
+              environmentVariables:
+                - name: BOX_ADDRESS
+                  value: web:80
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 1
+              reliableCollectionsRefs:
+                - name: VisualObjectsCollections
+          replicaCount: 1
+          networkRefs:
+            - name: VisualObjectsNetwork
+              endpointRefs:
+                - name: rcworkerListener
