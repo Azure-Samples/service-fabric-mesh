@@ -1,0 +1,16 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: helloWorldGateway
+  properties:
+    description: Service Fabric Mesh Gateway for HelloWorld sample deployed from private registry.
+    sourceNetwork:
+        name: Open
+    destinationNetwork:
+        name: helloWorldPrivateRegistryNetwork
+    tcp:
+      - name: PublicConnection
+        port: 80
+        destination:
+            applicationName: helloWorldPrivateRegistryApp
+            serviceName: helloWorldService
+            endpointName: helloWorldListener

@@ -1,0 +1,25 @@
+application:
+  schemaVersion: 1.0.0-preview2
+  name: helloWorldApp
+  properties:
+    description: app1 description2.
+    services:
+    - name: helloWorldService
+      properties:
+        description: svc1 description.
+        osType: Linux
+        codePackages:
+        - name: helloWorldCode
+          image: seabreeze/azure-mesh-helloworld-sidecar:1.0-alpine
+          endpoints:
+          - name: helloWorldListener
+            port: 80
+          resources:
+            requests:
+              cpu: 0.5
+              memoryInGB: 1
+        replicaCount: 1
+        networkRefs:
+        - name: helloWorldNetwork
+          endpointRefs:
+          - name: helloWorldListener

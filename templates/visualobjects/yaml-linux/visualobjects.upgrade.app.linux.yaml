@@ -1,0 +1,39 @@
+application:
+  schemaVersion: 1.0.0-preview2
+  name: visualObjectsApp
+  properties:
+    description: Service Fabric Mesh Visual Objects Application!
+    services:
+    - name: web
+      properties:
+        description: Service Fabric Mesh Visual Objects Web Service.
+        osType: linux
+        codePackages:
+        - name: code
+          image: seabreeze/azure-mesh-visualobjects-web:1.1-stretch
+          endpoints:
+          - name: webListener
+            port: 80
+          resources:
+            requests:
+              cpu: 1
+              memoryInGB: 1
+        replicaCount: 1
+        networkRefs:
+        - name: visualObjectsNetwork
+          endpointRefs:
+          - name: webListener
+    - name: worker
+      properties:
+        description: Service Fabric Mesh Visual Objects Worker Service.
+        osType: linux
+        codePackages:
+        - name: code
+          image: seabreeze/azure-mesh-visualobjects-worker:1.1-rotate-stretch
+          resources:
+            requests:
+              cpu: 1
+              memoryInGB: 1
+        replicaCount: 3
+        networkRefs:
+        - name: visualObjectsNetwork

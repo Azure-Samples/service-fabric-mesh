@@ -1,0 +1,16 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: visualObjectsGateway
+  properties:
+    description: Service Fabric Mesh Gateway for visualObject sample.
+    sourceNetwork:
+        name: Open
+    destinationNetwork:
+        name: visualObjectsNetwork
+    tcp:
+      - name: PublicConnection
+        port: 80
+        destination:
+            applicationName: visualObjectsApp
+            serviceName: web
+            endpointName: webListener

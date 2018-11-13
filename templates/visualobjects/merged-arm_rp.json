@@ -1,0 +1,137 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "westus",
+            "type": "String",
+            "metadata": {
+                "description": "Location of the resources."
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-09-01-preview",
+            "name": "visualObjectsAppWindows",
+            "type": "Microsoft.ServiceFabricMesh/applications",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "Microsoft.ServiceFabricMesh/networks/visualObjectsNetworkWindows"
+            ],
+            "properties": {
+                "description": "Service Fabric Mesh Visual Objects Application!",
+                "services": [
+                    {
+                        "name": "web",
+                        "properties": {
+                            "description": "Service Fabric Mesh Visual Objects Web Service.",
+                            "osType": "windows",
+                            "codePackages": [
+                                {
+                                    "name": "code",
+                                    "image": "seabreeze/azure-mesh-visualobjects-web:1.1-nanoserver-1709",
+                                    "endpoints": [
+                                        {
+                                            "name": "webListener",
+                                            "port": 80
+                                        }
+                                    ],
+                                    "resources": {
+                                        "requests": {
+                                            "cpu": 1.0,
+                                            "memoryInGB": 1.0
+                                        }
+                                    }
+                                }
+                            ],
+                            "replicaCount": 1,
+                            "networkRefs": [
+                                {
+                                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks','visualObjectsNetworkWindows')]",
+                                    "endpointRefs": [
+                                        {
+                                            "name": "webListener"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "worker",
+                        "properties": {
+                            "description": "Service Fabric Mesh Visual Objects Worker Service.",
+                            "osType": "windows",
+                            "codePackages": [
+                                {
+                                    "name": "code",
+                                    "image": "seabreeze/azure-mesh-visualobjects-worker:1.1-rotate-nanoserver-1709",
+                                    "resources": {
+                                        "requests": {
+                                            "cpu": 1.0,
+                                            "memoryInGB": 1.0
+                                        }
+                                    }
+                                }
+                            ],
+                            "replicaCount": 3,
+                            "networkRefs": [
+                                {
+                                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks','visualObjectsNetworkWindows')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-09-01-preview",
+            "name": "visualObjectsGatewayWindows",
+            "type": "Microsoft.ServiceFabricMesh/gateways",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "Microsoft.ServiceFabricMesh/networks/visualObjectsNetworkWindows"
+            ],
+            "properties": {
+                "description": "Service Fabric Mesh Gateway for visualObject sample.",
+                "sourceNetwork": {
+                    "name": "Open"
+                },
+                "destinationNetwork": {
+                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'visualObjectsNetworkWindows')]"
+                },
+                "tcp": [
+                    {
+                        "name": "PublicConnection",
+                        "port": 80,
+                        "destination": {
+                            "applicationName": "visualObjectsAppWindows",
+                            "serviceName": "web",
+                            "endpointName": "webListener"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-09-01-preview",
+            "name": "visualObjectsNetworkWindows",
+            "type": "Microsoft.ServiceFabricMesh/networks",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "kind": "Local",
+                "description": "Service Fabric Mesh Visual Objects network!",
+                "networkAddressPrefix": "10.0.0.0/16"
+            }
+        }
+    ],
+    "outputs": {
+        "publicIPAddress": {
+            "value": "[reference('visualObjectsGatewayWindows').ipAddress]",
+            "type": "string"
+        }
+    }
+}

@@ -1,0 +1,29 @@
+application:
+  schemaVersion: 1.0.0-preview2
+  name: helloWorldApp
+  properties:
+    description: Service Fabric Mesh HelloWorld application with container deployed from private registry.
+    services:
+    - name: helloWorldService
+      properties:
+        description: Service Fabric Mesh HelloWorld service with container deployed from private registry.
+        osType: windows
+        codePackages:
+        - name: helloWorldCode
+          image: [concat(parameters('registry-server'), '/seabreeze/azure-mesh-helloworld:1.1-windowsservercore-1709')]
+          imageRegistryCredential:
+            server: [parameters('registry-server')]
+            username: [parameters('registry-username')]
+            password: [resourceId('Microsoft.ServiceFabricMesh/secrets/values','helloWorldPrivateRegistryPassword','v1')]
+          endpoints:
+          - name: helloWorldListener
+            port: 80
+          resources:
+            requests:
+              cpu: 0.5
+              memoryInGB: 1
+        replicaCount: 1
+        networkRefs:
+        - name: helloWorldPrivateRegistryNetwork
+          endpointRefs:
+          - name: helloWorldListener

@@ -1,0 +1,7 @@
+network:
+  schemaVersion: 1.0.0-preview2
+  name: helloWorldNetwork
+  properties:
+    kind: Local
+    description: Service Fabric Mesh Network for HelloWorld sample deployed from private registry.
+    networkAddressPrefix: 10.0.0.0/24
