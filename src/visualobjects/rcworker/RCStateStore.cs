@@ -29,7 +29,7 @@ namespace VisualObjects.Worker
             if (stateManager == null)
             {
                 Console.WriteLine($"Failed to get StateManager");
-                return VisualObject.CreateRandom(Guid.NewGuid().ToString());
+                return null;
             }
 
             using (var txn = stateManager.CreateTransaction())
