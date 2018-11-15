@@ -1,0 +1,133 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"resources": [
+		{
+			"type": "Microsoft.ServiceFabricMesh/applications",
+			"apiVersion": "2018-09-01-preview",
+			"name": "votinglinuxv9",
+			"location": "eastus",
+			"properties": {
+				"services": [
+		            {
+		            	"name": "VotingWeb",
+		            	"properties": {
+		            		"description": "VotingWeb description",
+		            		"osType": "linux",
+		            		"codePackages": [
+		            			{
+		            				"name": "VotingWeb",
+		            				"image": " kailaslokhande/votingweb:linux_mv4",
+		            				"endpoints": [
+		            					{
+		            						"name": "VotingWebListener",
+		            						"port": "80"
+		            					}
+		            				],
+		            				"environmentVariables": [
+		            					{
+		            						"name": "ASPNETCORE_URLS",
+		            						"value": "http://+:80"
+		            					},
+		            					{
+		            						"name": "Voting_BackendHostName",
+		            						"value": "votingdata.votinglinuxv9"
+		            					},
+		            					{
+		            						"name": "Voting_BackendHostPort",
+		            						"value": "8288"
+		            					}
+		            				],
+		            				"resources": {
+		            					"requests": {
+		            						"cpu": 0.5,
+		            						"memoryInGB": 1.0
+		            					}
+		            				}
+		            			}
+					],
+					"replicaCount": 1,
+					"networkRefs":[
+						{                            
+							"name":"[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingnetworkmridul')]"                         
+						}
+					]
+				}
+			    },
+			    {
+				    "name": "VotingData",
+				    "properties": {
+					    "description": "VotingData backend service",
+					    "osType": "linux",
+					    "codePackages": [
+						    {
+							    "name": "VotingData",
+							    "image": "kailaslokhande/votingdata:mridul_v2",
+							    "endpoints": [
+								    {
+									    "name": "VotingDataListener",
+									    "port": "8288"
+								    }
+							    ],
+							    "environmentVariables": [
+								    {
+									    "name": "ASPNETCORE_URLS",
+									    "value": "http://+:8288"
+								    },
+								    {
+									    "name": "SF_FORCE_NAMED_PARTITION",
+									    "value": "1"
+								    }
+							    ],
+							    "resources": {
+								    "requests": {
+									    "cpu": "1.0",
+									    "memoryInGB": "1.0"
+								    }
+							    },
+							    "reliableCollectionsRefs": [
+								    {
+									    "name": "SeaBreezeDemoCollection"
+								    }
+							    ]
+						    }
+							],
+							"replicaCount": "3",
+							"networkRefs":[
+								{                            
+									"name":"[resourceId('Microsoft.ServiceFabricMesh/networks', 'votingnetworkmridul')]"                         
+								}
+							]
+						}
+					}
+				],
+				"description": "Mesh Voting App",
+				"dependsOn":[  
+                       "Microsoft.ServiceFabricMesh/networks/votingnetworkmridul"
+                 ]
+			}
+		},
+		{
+            "type": "Microsoft.ServiceFabricMesh/networks",
+            "name": "votingnetworkmridul",
+            "apiVersion": "2018-09-01-preview",
+            "location": "eastus",
+            "properties": {
+                "description": "Azure Service Fabric Mesh Counter Application network.",
+                "addressPrefix": "10.0.0.4/22",
+                "ingressConfig": {
+                    "layer4": [
+                        {
+                            "name": "votingIngressMridul",
+                            "publicPort": "80",
+                            "applicationName": "votinglinuxv9",
+                            "serviceName": "VotingWeb",
+                            "endpointName": "VotingWebListener"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": []
+        }
+	]
+}
