@@ -8,6 +8,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -103,7 +104,12 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         {
             try
             {
-                File.WriteAllText(stateFilePath, value.ToString());
+                using (var file = new FileStream(stateFilePath, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    var bytes = Encoding.ASCII.GetBytes(value.ToString());
+                    file.Write(bytes, 0, bytes.Length);
+                    file.Flush();
+                }
             }
             catch(Exception e)
             {
@@ -120,7 +126,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
 
             return TimeSpan.FromSeconds(counterUpdateInternalSeconds);
         }
-        
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
