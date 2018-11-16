@@ -157,5 +157,4 @@ namespace Microsoft.ServiceFabricMesh.Samples.Settings.Service
             public string value { get; set; }
         }
     }
-
 }

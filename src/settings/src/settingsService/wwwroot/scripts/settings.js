@@ -1,5 +1,4 @@
 function init() {
-
     getData();
     updateCurrentTime();
 }
@@ -18,15 +17,6 @@ function getData() {
 function updateCurrentTime() {
     document.getElementById("currentTime").innerHTML = "" + new Date();
     setTimeout(updateCurrentTime, 1000);
-}
-
-function onNewStringDataReceived(jsonString) {
-    try {
-        var jsonData = JSON.parse(jsonString);
-        onNewDataReceived(jsonData);
-    }
-    catch (err) {
-    }
 }
 
 function onNewDataReceived(jsonData) {
