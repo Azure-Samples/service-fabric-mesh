@@ -1,0 +1,176 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsSecret_1",
+      "type": "Microsoft.ServiceFabricMesh/secrets",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "inlinedValue",
+        "contentType": "text/plain",
+        "description": "An example secret that is passed as an environment variable in the container."
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsSecret_1/v1",
+      "type": "Microsoft.ServiceFabricMesh/secrets/values",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/settingsSecret_1"
+      ],
+      "properties": {
+        "value": "Secret-In-The-Environment-Variable"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsSecret_2",
+      "type": "Microsoft.ServiceFabricMesh/secrets",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "inlinedValue",
+        "contentType": "text/plain",
+        "description": "An example secret that is passed as an settings file in the container."
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsSecret_2/v1",
+      "type": "Microsoft.ServiceFabricMesh/secrets/values",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/settingsSecret_2"
+      ],
+      "properties": {
+        "value": "Secret-In-The-Settings-File"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Service Fabric Mesh Network for Settings sample.",
+        "networkAddressPrefix": "2.0.0.0/16"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/settingsNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for Settings sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'settingsNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "settingsApp",
+              "serviceName": "settingsService",
+              "endpointName": "settingsListener"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "settingsApp",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/settingsSecret_1",
+        "Microsoft.ServiceFabricMesh/secrets/settingsSecret_1/values/v1",
+        "Microsoft.ServiceFabricMesh/secrets/settingsSecret_2",
+        "Microsoft.ServiceFabricMesh/secrets/settingsSecret_2/values/v1",
+        "Microsoft.ServiceFabricMesh/networks/settingsNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Settings Application.",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "name": "settingsService",
+            "properties": {
+              "description": "Service Fabric Mesh Settings Service.",
+              "osType": "linux",
+              "codePackages": [
+                {
+                  "name": "settingsCode",
+                  "image": "vipulmmsft/azure-mesh-settings:0.0.1-alpine",
+                  "endpoints": [
+                    {
+                      "name": "settingsListener",
+                      "port": "80"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memoryInGB": "1"
+                    }
+                  },
+                  "environmentVariables": [
+                    {
+                      "name": "SECRET-1_VALUE",
+                      "value": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','settingsSecret_1','v1')]"
+                    }
+                  ],
+                  "settings": [
+                    {
+                      "name": "SECRET-2_VALUE",
+                      "value": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','settingsSecret_2','v1')]"
+                    }
+                  ]
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'settingsNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "settingsListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('settingsGateway').ipAddress]",
+      "type": "string"
+    }
+  }
+}

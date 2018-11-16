@@ -1,0 +1,71 @@
+<html>
+<head>
+    <title>Azure Service Fabric Mesh Settings Demo</title>
+    <script type="text/javascript" src="scripts/settings.js"></script>
+    <script type="text/javascript" src="scripts/jquery-3.3.1.min.js"></script>
+    <style type="text/css">
+        body {
+            font-family: calibri, arial;
+        }
+
+        table {
+            width: 75%;
+        }
+
+        td, th {
+            border: 1px solid #466E85;
+            padding: 7px;
+        }
+
+        #container-info-table th {
+            background-color: lightyellow;
+            font-weight:bold;
+        }
+
+        #environment-table th {
+            background-color: lightblue;
+            font-weight:bold;
+        }
+
+        #settings-table th {
+            background-color: lightgray;
+            font-weight:bold;
+        }
+
+
+        div.centered 
+        {
+            text-align: center;
+        }
+
+        div.centered table 
+        {
+            margin: 0 auto; 
+            text-align: left;
+        }
+
+    </style>
+</head>
+<body onload="init();">
+    <div class="centered">
+        <br/>
+        <h1>Azure Service Fabric Mesh Settings Demo</h1>
+        <br/>
+        <br/>
+        <h2>Container Information</h2>
+        <table id="container-info-table" align></table>
+        <br/>
+        <h2>Environment Variables</h2>
+        <table id="environment-table" align></table>
+        <br/>
+        <h2>Settings</h2>
+        <table id="settings-table" align></table>
+        <br/>
+        <p>
+            <strong>Updated At   : </strong><updatedAt id="updatedAt"></updatedAt>
+            <br/>
+            <strong>Current Time : </strong><currentTime id="currentTime"></currentTime>
+        </p>
+    </div>
+</body>
+</html>

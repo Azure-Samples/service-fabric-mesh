@@ -1,0 +1,14 @@
+## Network definition ##
+network:
+  schemaVersion: 1.0.0-preview1
+  name: settingsAppNetwork
+  properties:
+    description: Azure Service Fabric Mesh Settings Application network.
+    addressPrefix: 10.0.0.4/22
+    ingressConfig:
+      layer4:
+        - name: settingsServiceIngress
+          publicPort: 8080
+          applicationName: settingsApp
+          serviceName: settingsService
+          endpointName: settingsServiceListener
