@@ -9,6 +9,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Settings.Service
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.NetworkInformation;
     using System.Text;
@@ -119,7 +120,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Settings.Service
                 });
             }
 
-            envVarList.Sort((s, t) => { return string.CompareOrdinal(s.name, t.name); });
+            envVarList.Sort((s, t) => { return string.Compare(s.name, t.name); });
             return envVarList;
         }
 
@@ -133,7 +134,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Settings.Service
                 return settings;
             }
 
-            var settingsFiles = Directory.GetFiles(settingsPath);
+            var settingsFiles = Directory.GetFiles(settingsPath).OrderBy(f => f);
             foreach (var f in settingsFiles)
             {
                 try

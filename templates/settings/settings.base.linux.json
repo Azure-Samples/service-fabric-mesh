@@ -123,7 +123,7 @@
               "codePackages": [
                 {
                   "name": "settingsCode",
-                  "image": "vipulmmsft/azure-mesh-settings:0.0.1-alpine",
+                  "image": "seabreeze/azure-mesh-settings:0.1.3-alpine",
                   "endpoints": [
                     {
                       "name": "settingsListener",
@@ -138,13 +138,21 @@
                   },
                   "environmentVariables": [
                     {
-                      "name": "SECRET-1_VALUE",
+                      "name": "_CONFIG-PARAM-1",
+                      "value": "Config-In-The-Environment-Variable"
+                    },
+                    {
+                      "name": "_SECRET-PARAM-1",
                       "value": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','settingsSecret_1','v1')]"
                     }
                   ],
                   "settings": [
                     {
-                      "name": "SECRET-2_VALUE",
+                      "name": "_CONFIG-PARAM-2",
+                      "value": "Config-In-The-Settings-File"
+                    },
+                    {
+                      "name": "_SECRET-PARAM-2",
                       "value": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','settingsSecret_2','v1')]"
                     }
                   ]
