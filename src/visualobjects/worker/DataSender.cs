@@ -14,21 +14,14 @@ namespace VisualObjects.Worker
     // sends the location of the visual object, until cancelled
     internal class DataSender
     {
-        private const string SendAddressEnvVar = "BOX_ADDRESS";
+        private const string SendAddressEnvVar = "WEB_ENDPOINT";
         private static readonly String SendAddress;
         private static readonly HttpClient Client;
         private static bool ReportError = true;
 
         static DataSender()
         {
-            if (Environment.GetEnvironmentVariable(SendAddressEnvVar) != null)
-            {
-                SendAddress = Environment.GetEnvironmentVariable(SendAddressEnvVar);
-            }
-            else
-            {
-                SendAddress = "web:80";
-            }
+            SendAddress = Environment.GetEnvironmentVariable(SendAddressEnvVar) ?? "web:20005";
 
             Client = new HttpClient();
         }
