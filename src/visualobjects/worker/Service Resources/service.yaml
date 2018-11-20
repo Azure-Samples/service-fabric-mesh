@@ -1,21 +1,23 @@
 ﻿## Service definition ##
 application:
-  schemaVersion: 0.0.1
+  schemaVersion: 1.0.0-preview1
   name: VisualObjects
-  services:
-    - name: worker
-      description: worker description.
-      osType: Windows
-      codePackages:
-        - name: worker
-          image: worker:dev
-          endpoints:
-            - name: workerListener
-              port: 20009
-          resources:
-            requests:
-              cpu: 0.5
-              memoryInGB: 1
-      replicaCount: 1
-      networkRefs:
-        - name: VisualObjectsNetwork
+  properties:
+    services:
+      - name: worker
+        properties:
+          description: worker description.
+          osType: Windows
+          codePackages:
+            - name: worker
+              image: worker:dev
+              environmentVariables:
+                - name: WEB_ENDPOINT
+                  value: "web:20005"
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 1
+          replicaCount: 1
+          networkRefs:
+            - name: VisualObjectsNetwork
