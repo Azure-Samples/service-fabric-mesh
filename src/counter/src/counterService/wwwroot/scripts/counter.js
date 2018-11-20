@@ -3,6 +3,8 @@ function init() {
 }
 
 var websocket;
+var lastCounterValue = 0;
+
 function initWebSocket() {
     websocket = new WebSocket("ws://" + window.location.host + "/data");
 
@@ -19,6 +21,23 @@ function initWebSocket() {
     websocket.onerror = function (error) {
         websocket.close();
     }
+
+    websocket.addEventListener("message", function(event){
+        try {
+            var newCounterValue = JSON.parse(event.data).value;
+            if (lastCounterValue > newCounterValue)
+            {
+                var message = `Unexpected : Counter value decreased.
+                lastCounterValue : ${lastCounterValue} , newCounterValue : ${newCounterValue}`;
+                document.getElementById("message").innerHTML = message;
+            }
+
+            lastCounterValue = newCounterValue;
+        } catch(err)
+        {
+            document.getElementById("message").innerHTML = err + " event : " + JSON.stringify(event);
+        }
+    });
 }
 
 
