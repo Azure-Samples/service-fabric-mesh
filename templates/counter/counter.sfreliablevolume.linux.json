@@ -4,6 +4,7 @@
   "parameters": {
     "location": {
       "type": "string",
+      "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "Location of the resources (e.g. westus, eastus, westeurope)."
       }
@@ -19,32 +20,44 @@
   "resources": [
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "counterAppWindowsSFVD",
+      "name": "counterNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Azure Service Fabric Mesh Counter Application network.",
+        "networkAddressPrefix": "10.0.0.0/24"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "counterApp",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/counterAppWindowsNetworkSFVD"
+        "Microsoft.ServiceFabricMesh/networks/counterNetwork"
       ],
       "properties": {
-        "description": "Azure Service Fabric Mesh Counter Application using SFVolumeDisk.",
+        "description": "Azure Service Fabric Mesh Counter Application.",
         "services": [
           {
             "name": "counterService",
             "properties": {
-              "description": "A web service that serves the counter value stored in SFVolumeDisk.",
-              "osType": "windows",
+              "description": "A web service that serves the counter value stored in Service Fabric Reliable volume.",
+              "osType": "linux",
               "codePackages": [
                 {
-                  "name": "counterService",
-                  "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
+                  "name": "counterCode",
+                  "image": "seabreeze/azure-mesh-counter:0.1-alpine",
                   "volumes": [
                     {
-                      "name": "myvol",
+                      "name": "sfvol",
                       "creationParameters": {
                         "kind": "ServiceFabricVolumeDisk",
                         "sizeDisk": "Small"
                       },
-                      "destinationPath": "C:\\app\\data"
+                      "destinationPath": "/app/data"
                     }
                   ],
                   "endpoints": [
@@ -70,7 +83,12 @@
               "replicaCount": 1,
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterAppWindowsNetworkSFVD')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "counterServiceListener"
+                    }
+                  ]
                 }
               ]
             }
@@ -80,25 +98,38 @@
     },
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "counterAppWindowsNetworkSFVD",
-      "type": "Microsoft.ServiceFabricMesh/networks",
+      "name": "counterGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
       "location": "[parameters('location')]",
-      "dependsOn": [],
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/counterNetwork"
+      ],
       "properties": {
-        "description": "Azure Service Fabric Mesh Counter Application network.",
-        "addressPrefix": "10.0.0.4/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "counterServiceIngress",
-              "publicPort": "80",
-              "applicationName": "counterAppWindowsSFVD",
+        "description": "Service Fabric Mesh Gateway for counter sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'counterNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "counterApp",
               "serviceName": "counterService",
               "endpointName": "counterServiceListener"
             }
-          ]
-        }
+          }
+        ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('counterGateway').ipAddress]",
+      "type": "string"
+    }
+  }
 }

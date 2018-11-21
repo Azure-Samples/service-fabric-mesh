@@ -2,41 +2,38 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-        "value": "eastus"
-    },
     "registryPassword": {
-        "value": "MyPassword"
-      },
-      "registryUserName": {
-          "value": "<mycontainerregistry>"
-      },
-      "registryServer": {
-          "value": "<mycontainerregistry>.azurecr.io"
-      },
-      "frontEndImage": {
-          "value": "<mycontainerregistry>.azurecr.io/seabreeze/azure-mesh-todo-webfrontend:1.0-nanoserver-1709"
-      },
-      "serviceImage": {
-          "value": "<mycontainerregistry>.azurecr.io/seabreeze/azure-mesh-todo-service:1.0-nanoserver-1709"
-      },
-      "frontEndCpu": {
-        "value": "0.5"
-      },
-      "serviceCpu": {
-        "value": "0.5"
-      },
-      "frontEndMemory":{
-        "value": "1.0"
-      },
-      "serviceMemory":{
-        "value": "1.0"
-      },
-      "frontEndReplicaCount":{
-        "value": "1"
-      },
-      "serviceReplicaCount":{
-        "value": "1"
-      }
+      "value": "MyPassword"
+    },
+    "registryUserName": {
+        "value": "<mycontainerregistry>"
+    },
+    "registryServer": {
+        "value": "<mycontainerregistry>.azurecr.io"
+    },
+    "frontEndImage": {
+        "value": "<mycontainerregistry>.azurecr.io/seabreeze/azure-mesh-todo-webfrontend:1.0-nanoserver-1709"
+    },
+    "serviceImage": {
+        "value": "<mycontainerregistry>.azurecr.io/seabreeze/azure-mesh-todo-service:1.0-nanoserver-1709"
+    },
+    "frontEndCpu": {
+      "value": "0.5"
+    },
+    "serviceCpu": {
+      "value": "0.5"
+    },
+    "frontEndMemory":{
+      "value": "1.0"
+    },
+    "serviceMemory":{
+      "value": "1.0"
+    },
+    "frontEndReplicaCount":{
+      "value": "1"
+    },
+    "serviceReplicaCount":{
+      "value": "1"
+    }
   }
 }
