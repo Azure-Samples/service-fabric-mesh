@@ -1,0 +1,34 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview2
+  name: RCVotingApp
+  properties:
+    services:
+      - name: VotingWeb
+        properties:
+          description: VotingWeb description.
+          osType: Windows
+          codePackages:
+            - name: VotingWeb
+              image: votingweb:dev
+              endpoints:
+                - name: VotingWebListener
+                  port: 20005
+              environmentVariables:
+                - name: ASPNETCORE_URLS
+                  value: http://+:20005
+#                - name: ApplicationInsights:InstrumentationKey
+#                  value: "<Place AppInsights key here, or reference it via a secret>"
+                - name: Voting_BackendHostName
+                  value: votingdata.RCVotingApp
+                - name: Voting_BackendHostPort
+                  value: 20009
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 1
+          replicaCount: 1
+          networkRefs:
+            - name: RCVotingAppNetwork
+              endpointRefs:
+                - name: VotingWebListener

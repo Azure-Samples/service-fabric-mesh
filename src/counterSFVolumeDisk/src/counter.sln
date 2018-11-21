@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9B56FCB0-63B4-404F-8A09-42EF52B53347}") = "counter", "counter\counter.sfaproj", "{7D82C8E1-BB96-4224-9313-66E4708F84EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "counterService", "counterService\counterService.csproj", "{76F462BC-5933-4211-BE85-660B974C5764}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D82C8E1-BB96-4224-9313-66E4708F84EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D82C8E1-BB96-4224-9313-66E4708F84EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D82C8E1-BB96-4224-9313-66E4708F84EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D82C8E1-BB96-4224-9313-66E4708F84EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76F462BC-5933-4211-BE85-660B974C5764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76F462BC-5933-4211-BE85-660B974C5764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76F462BC-5933-4211-BE85-660B974C5764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76F462BC-5933-4211-BE85-660B974C5764}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {99AE5AC4-7192-4E37-91B5-9280EBBC58A6}
+	EndGlobalSection
+EndGlobal

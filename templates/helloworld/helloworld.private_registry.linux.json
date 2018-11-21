@@ -1,0 +1,162 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
+      }
+    },
+    "registry-server": {
+      "type": "string",
+      "metadata": {
+        "description": "Private image registry server. For example, <myacr>.azurecr.io"
+      }
+    },
+    "registry-username": {
+      "type": "string",
+      "metadata": {
+        "description": "User name for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"username\"' will show the username."
+      }
+    },
+    "registry-password": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"passwords[0].value\"' will show the password."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldPrivateRegistryPassword",
+      "type": "Microsoft.ServiceFabricMesh/secrets",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "inlinedValue",
+        "contentType": "text/plain",
+        "description": "Azure container registry password."
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldPrivateRegistryPassword/v1",
+      "type": "Microsoft.ServiceFabricMesh/secrets/values",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/secrets/helloWorldPrivateRegistryPassword"
+      ],
+      "properties": {
+        "value": "[parameters('registry-password')]"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldPrivateRegistryNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Service Fabric Mesh Network for HelloWorld sample deployed from private registry.",
+        "networkAddressPrefix": "10.0.0.0/24"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldPrivateRegistryGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for HelloWorld sample deployed from private registry.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "helloWorldPrivateRegistryApp",
+              "serviceName": "helloWorldService",
+              "endpointName": "helloWorldListener"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "helloWorldPrivateRegistryApp",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork",
+        "Microsoft.ServiceFabricMesh/secrets/helloWorldPrivateRegistryPassword/values/v1"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh HelloWorld application with container deployed from private registry.",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "helloWorldService",
+            "properties": {
+              "description": "Service Fabric Mesh HelloWorld service with container deployed from private registry.",
+              "osType": "linux",
+              "codePackages": [
+                {
+                  "name": "helloWorldCode",
+                  "image": "[concat(parameters('registry-server'), '/seabreeze/azure-mesh-helloworld:1.1-alpine')]",
+                  "imageRegistryCredential": {
+                    "server": "[parameters('registry-server')]",
+                    "username": "[parameters('registry-username')]",
+                    "password": "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','helloWorldPrivateRegistryPassword','v1')]"
+                  },
+                  "endpoints": [
+                    {
+                      "name": "helloWorldListener",
+                      "port": "80"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memoryInGB": "1"
+                    }
+                  }
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "helloWorldListener"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('helloWorldPrivateRegistryGateway').ipAddress]",
+      "type": "string"
+    }
+  }
+}

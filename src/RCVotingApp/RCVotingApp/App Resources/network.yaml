@@ -1,0 +1,8 @@
+## Network definition ##
+network:
+  schemaVersion: 1.0.0-preview2
+  name: RCVotingAppNetwork
+  properties:
+    description: RCVotingAppNetwork description.
+    networkAddressPrefix: 10.128.0.0/16
+    kind: Local

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9B56FCB0-63B4-404F-8A09-42EF52B53347}") = "RCVotingApp", "RCVotingApp\RCVotingApp.sfaproj", "{64A1193D-CA41-48E6-87DB-08CF8E02E5A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VotingData", "VotingData\VotingData.csproj", "{FF22EA27-24D3-4F2B-8D6B-4576CCD9DB72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VotingWeb", "VotingWeb\VotingWeb.csproj", "{F256C295-8F11-4CE4-826A-E25B986571DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64A1193D-CA41-48E6-87DB-08CF8E02E5A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64A1193D-CA41-48E6-87DB-08CF8E02E5A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64A1193D-CA41-48E6-87DB-08CF8E02E5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64A1193D-CA41-48E6-87DB-08CF8E02E5A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF22EA27-24D3-4F2B-8D6B-4576CCD9DB72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF22EA27-24D3-4F2B-8D6B-4576CCD9DB72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF22EA27-24D3-4F2B-8D6B-4576CCD9DB72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF22EA27-24D3-4F2B-8D6B-4576CCD9DB72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F256C295-8F11-4CE4-826A-E25B986571DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F256C295-8F11-4CE4-826A-E25B986571DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F256C295-8F11-4CE4-826A-E25B986571DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F256C295-8F11-4CE4-826A-E25B986571DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6B9E24E5-01C6-4B22-8FAC-B2ECF8EAE634}
+	EndGlobalSection
+EndGlobal

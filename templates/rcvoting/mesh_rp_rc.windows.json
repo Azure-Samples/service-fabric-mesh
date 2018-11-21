@@ -1,0 +1,177 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources (e.g. westus, eastus, westeurope)."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "rcVotingAppNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "kind": "Local",
+        "description": "Service Fabric Mesh Voting App with Reliable Collections network!",
+        "networkAddressPrefix": "2.0.0.0/22"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "rcVotingAppGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/rcVotingAppNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for HelloWorld sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'rcVotingAppNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
+              "applicationName": "rcVotingApp",
+              "serviceName": "VotingWeb",
+              "endpointName": "VotingWebListener"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "rcVotingApp",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/rcVotingAppNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Voting Application with Reliable Collections!",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "VotingWeb",
+            "properties": {
+              "description": "Service Fabric Mesh VotingWeb Service.",
+              "osType": "windows",
+              "codePackages": [
+                {
+                  "name": "VotingWeb",
+                  "image": "seabreeze/azure-mesh-rcvoting-web:1.0-windows",
+                  "endpoints": [
+                    {
+                      "name": "VotingWebListener",
+                      "port": "20005"
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "http://+:20005"
+                    },
+                    {
+                      "name": "Voting_BackendHostName",
+                      "value": "votingdata.rcVotingApp"
+                    },
+                    {
+                      "name": "Voting_BackendHostPort",
+                      "value": "20009"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "0.5",
+                      "memoryInGB": "1"
+                    }
+                  }
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'rcVotingAppNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "VotingWebListener"
+                    }
+                  ]  
+                }
+              ]
+            }
+          },
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "VotingData",
+            "properties": {
+              "description": "Service Fabric Mesh VotingData Service.",
+              "osType": "windows",
+              "codePackages": [
+                {
+                  "name": "VotingData",
+                  "image": "seabreeze/azure-mesh-rcvoting-data:1.0-windows",
+                  "endpoints": [
+                    {
+                      "name": "VotingDataListener",
+                      "port": "20009"
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "http://+:20009"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "0.5",
+                      "memoryInGB": "1"
+                    }
+                  },
+                  "reliableCollectionsRefs": [
+                    {
+                      "name": "VotingApplicationReliableCollections"
+                    }
+                  ]
+                }
+              ],
+              "replicaCount": "3",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'rcVotingAppNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "VotingDataListener"
+                    }
+                  ]  
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "publicIPAddress": {
+        "value" : "[reference('rcVotingAppGateway').ipAddress]",
+        "type": "string"
+    }
+  }
+
+}
