@@ -1,3 +1,3 @@
 @echo off
-echo docker build windows -f windows\Dockerfile -t azure-mesh-helloworld:dev-windowsservercore-1709
-docker build windows -f windows\Dockerfile -t azure-mesh-helloworld:dev-windowsservercore-1709
+call ..\scripts\windows\build_and_publish.cmd helloworld.imageinfo.txt %*
+exit /b %ERRORLEVEL%
