@@ -35,25 +35,23 @@ do
 
     if [ "$registry_path" = "" ]
     then
-        exit 0
+        continue
     fi
 
     echo Tagging image
-    docker_command=docker tag $image_name:dev-$tag_value $registry_path/$image_name:$registry_tag_value
+    docker_command="docker tag $image_name:dev-$tag_value $registry_path/$image_name:$registry_tag_value"
     echo $docker_command
     eval $docker_command || { echo Failed to tag image $registry_path/$image_name:$registry_tag_value; exit 1; }
     echo Successfully tagged image $registry_path/$image_name:$registry_tag_value
     echo
 
     echo Publishing image
-    docker_command=docker push $registry_path/$image_name:$registry_tag_value
+    docker_command="docker push $registry_path/$image_name:$registry_tag_value"
     echo $docker_command
     eval $docker_command || { echo Failed to publish image to $registry_path/$image_name:$registry_tag_value; exit 1; }
 
     echo Successfully published image to $registry_path/$image_name:$registry_tag_value
     echo
-
-    exit /b 0
 done < $image_info_file
 
 if [ $found_entry -ne 1 ]
