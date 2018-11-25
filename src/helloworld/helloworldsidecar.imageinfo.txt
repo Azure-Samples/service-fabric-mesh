@@ -1,2 +1,2 @@
 os,image_name,tag_value,official_tag_value,registry_path,build_root_relative_to_this_folder,docker_file_path_relative_to_this_folder
-linux, azure-mesh-helloworld-sidecar, alpine, 6.4-alpine, linux/sidecar, linux/sidecar/Dockerfile
+linux, azure-mesh-helloworld-sidecar, alpine, 6.4.0-alpine, linux/sidecar, linux/sidecar/Dockerfile

@@ -1,3 +1,3 @@
 os,image_name,tag_value,official_tag_value,build_root_relative_to_this_folder,docker_file_path_relative_to_this_folder
-linux, azure-mesh-helloworld, alpine, 6.4-alpine, linux/main, linux/main/Dockerfile
-windows, azure-mesh-helloworld, nanoserver-1709, 6.4-nanoserver-1709, windows, windows\Dockerfile
+linux, azure-mesh-helloworld, alpine, 6.4.0-alpine, linux/main, linux/main/Dockerfile
+windows, azure-mesh-helloworld, nanoserver-1709, 6.4.0-nanoserver-1709, windows, windows\Dockerfile
