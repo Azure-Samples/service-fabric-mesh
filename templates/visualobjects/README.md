@@ -36,9 +36,9 @@ az mesh deployment create --resource-group myResourceGroup --template-uri https:
 
 ## See it in action 
 
-#### Open the application
+### Open the application
 
-Once the application successfully deploys, copy the public IP address from the `publicIPAddress` output property. Open up `<IP address>:8080` in your web browser to see the UI displayed. 
+Once the application successfully deploys, copy the public IP address from the `publicIPAddress` output property in the CLI. Open up `<IP address>:8080` in your web browser to see the UI displayed from the web service. 
 
 You can also obtain the public IP address from the details of the `visualObjectsGateway` resource using the following command.
 
@@ -48,6 +48,15 @@ az mesh gateway show -g myResourceGroup -n visualObjectsGateway -o table
 
 You should see one triangle flying around, representing the single instance worker service that was deployed. Leave this page open as you progress through the scale out and upgrade steps to see the changes!
 
+### Check the application details
+
+You can check the application's status using the `az mesh app show` command. This command provides useful information that you can follow up on as well as provides a point in time status of your app.
+
+The application name for the Linux app is `visualObjectsApp` (`visualObjectsAppWindows` for the Windows app). To see more details on the application, run the following command:
+
+```azurecli
+az mesh app show --resource-group myResourceGroup --name helloWorldApp
+```
 
 ## Scale the application
 
