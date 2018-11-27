@@ -37,7 +37,7 @@ az mesh deployment create --resource-group myResourceGroup --template-uri https:
 
 If you're using a PowerShell console, run the following:
 
-```azurecli
+```PowerShell
 az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/helloworld/helloworld.linux.json --parameters "{'location': {'value': 'eastus'}}"
 ```
 In a few minutes, if the deployment is successful the command will return the list of created resources and an output property for the public IP address.
