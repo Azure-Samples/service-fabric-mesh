@@ -1,5 +1,14 @@
 #!/bin/sh
-echo docker build linux/main -f linux/main/Dockerfile -t azure-mesh-helloworld:dev-alpine
-docker build linux/main -f linux/main/Dockerfile -t azure-mesh-helloworld:dev-alpine
-echo docker build linux/sidecar -f linux/sidecar/Dockerfile -t azure-mesh-helloworld-sidecar:dev-alpine
-docker build linux/sidecar -f linux/sidecar/Dockerfile -t azure-mesh-helloworld-sidecar:dev-alpine
+
+../scripts/linux/build_and_publish.sh helloworld.imageinfo.txt "$@" || {
+    echo Failed to process image for helloworld
+    exit 1
+}
+
+../scripts/linux/build_and_publish.sh helloworldsidecar.imageinfo.txt "$@" || {
+    echo Failed to process image for helloworldsidecar
+    exit 1
+}
+
+echo Successfully build helloworld images.
+exit 0
