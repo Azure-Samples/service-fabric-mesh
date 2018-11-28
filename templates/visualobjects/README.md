@@ -31,12 +31,12 @@ Create the application and related resources in the resource group using the `az
 If you're using a Bash console or Windows Command Prompt, run the following:
 
 ```azurecli
-az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.base.linux.json --parameters "{\"location\": {\"value\": \"eastus\"}}" 
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.base.linux.json
 ```
 
 If you're using a PowerShell console, run the following:
 ```PowerShell
-az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.base.linux.json --parameters "{'location': {'value': 'eastus'}}"
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.base.linux.json
 ```
 In a few minutes, if the deployment is successful the command will return the list of created resources and an output property for the public IP address.
 
@@ -70,7 +70,7 @@ The next step here is to scale the worker service up to 3 instances. 3 is the cu
 For this step, we will be using the [visualobjects.scaleout.linux.json template](https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.scaleout.linux.json). If you chose to deploy the sample as a Windows application in the prior step, use the [visualobjects.scaleout.windows.json template](https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.scaleout.windows.json) in the following command instead. 
 
 ```azurecli
-az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.scaleout.linux.json --parameters "{\"location\": {\"value\": \"eastus\"}}" 
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.scaleout.linux.json
 ```
 
 There is only one difference between the template used in this step and the one prior (scalout vs. base) - where the `worker` service is being described in the JSON, you will see `"replicaCount"` set to 3 instead of 1. 
@@ -82,7 +82,7 @@ In a few minutes, your web service should update and be rendering 3 triangles in
 We're now going to upgrade the same `worker` service to use a "new" image. Previously, the worker service replicas were using the seabreeze/azure-mesh-visualobjects-worker:1.1-stretch image, but with this deployment, we will be using a template that uses the seabreeze/azure-mesh-visualobjects-worker:1.1-rotate-stretch image. The template being used to upgrade the app is the [visualobjects.upgrade.linux.json template](https://github.com/Azure-Samples/service-fabric-mesh/blob/2018-09-01-preview/templates/visualobjects/visualobjects.upgrade.linux.json). If you chose to deploy the sample as a Windows application in the prior steps, use the [visualobjects.upgrade.windows.json template](https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/visualobjects/visualobjects.upgrade.windows.json) in the following command instead. 
 
 ```azurecli
-az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/master/templates/visualobjects/visualobjects.upgrade.linux.json --parameters "{\"location\": {\"value\": \"eastus\"}}"
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/master/templates/visualobjects/visualobjects.upgrade.linux.json
 ```
 
 The difference between this template and the one previously deployed is in the container image being use in the code package for the `worker` service. Another thing to point out here is that though both the scale out and the upgrade were just deployments of an updated template on the same application resource, they did result in two different types of changes - the former is more of a config change since the code packages being deployed are not change and only the request number of replicas changed, whereas the latter results in a full rolling upgrade for the applciation, where the container images are updated for a specific code package in a service.  
