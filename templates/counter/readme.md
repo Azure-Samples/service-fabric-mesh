@@ -63,16 +63,22 @@ The following command deploys a Linux application using the [counter.azurefilesv
 az mesh deployment create --resource-group myResourceGroup --template-uri https://sfmeshsamples.blob.core.windows.net/templates/counter/counter.azurefilesvolume.linux.json  --parameters "{\"location\": {\"value\": \"eastus\"}, \"fileShareName\": {\"value\": \"<fileShareName>\"}, \"storageAccountName\": {\"value\": \"<storageAccountName>\"}, \"storageAccountKey\": {\"value\": \"<storageAccountKey>\"}}"
 ```
 
-In a few minutes, the command should return with `counterApp has been deployed successfully on counterAppNetwork with public ip address <IP Address>`
-
+In a few minutes, the command should return json output. The "outputs" section prints the public ip addres <IP Address>.
+```
+    "outputs": {
+      "publicIPAddress": {
+        "type": "String",
+        "value": "<Public IP Address>"
+      } 
+```
 ## Open the application
 
 The deployment command will return the public IP address of the service endpoint. Once the application successfully deploys, get the public IP address for the service endpoint and open it from a browser. It will display a web page with the counter value being updated every second.
 
-The network resource name for this application is `counterAppNetwork`. You can see info about the app such as its description, location, resource group, etc. by using the following command:
+The network resource name for this application is `counterNetwork`. You can see info about the app such as its description, location, resource group, etc. by using the following command:
 
 ```azurecli-interactive
-az mesh network show --resource-group myResourceGroup --name counterAppNetwork
+az mesh network show --resource-group myResourceGroup --name counterNetwork
 ```
 
 ## Verify that the application is able to use the volume
