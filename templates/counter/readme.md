@@ -57,10 +57,10 @@ Create the application and related resources using the following command, and pr
 
 The `storageAccountKey` parameter in the template is a secure string. It will not be displayed in the deployment status and `az mesh service show` commands. Ensure that it is correctly specified in the following command.
 
-The following command deploys a Linux application using the [counter.azurefilesvolume.linux.json template](https://sfmeshsamples.blob.core.windows.net/templates/counter/counter.azurefilesvolume.linux.json). To deploy a Windows application, use the [counter.azurefilesvolume.windows.json template](https://sfmeshsamples.blob.core.windows.net/templates/counter/counter.azurefilesvolume.windows.json). Be aware that larger container images may take longer to deploy.
+The following command deploys a Linux application using the [counter.azurefilesvolume.linux.json template](https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/counter/counter.azurefilesvolume.linux.json). To deploy a Windows application, use the [counter.azurefilesvolume.windows.json template](https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/counter/counter.azurefilesvolume.windows.json). Be aware that larger container images may take longer to deploy.
 
 ```azurecli-interactive
-az mesh deployment create --resource-group myResourceGroup --template-uri https://sfmeshsamples.blob.core.windows.net/templates/counter/counter.azurefilesvolume.linux.json  --parameters "{\"location\": {\"value\": \"eastus\"}, \"fileShareName\": {\"value\": \"<fileShareName>\"}, \"storageAccountName\": {\"value\": \"<storageAccountName>\"}, \"storageAccountKey\": {\"value\": \"<storageAccountKey>\"}}"
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/2018-09-01-preview/templates/counter/counter.azurefilesvolume.linux.json --parameters "{\"location\": {\"value\": \"eastus\"}, \"fileShareName\": {\"value\": \"<fileShareName>\"}, \"storageAccountName\": {\"value\": \"<storageAccountName>\"}, \"storageAccountKey\": {\"value\": \"<storageAccountKey>\"}}"
 ```
 
 In a few minutes, the command should return with `counterApp has been deployed successfully on counterAppNetwork with public ip address <IP Address>`
