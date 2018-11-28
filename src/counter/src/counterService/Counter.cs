@@ -108,7 +108,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
                 {
                     var bytes = Encoding.ASCII.GetBytes(value.ToString());
                     file.Write(bytes, 0, bytes.Length);
-                    file.Flush();
+                    file.Flush(true);
                 }
             }
             catch(Exception e)
