@@ -3,11 +3,10 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5942",
+      "applicationUrl": "http://localhost:3085/",
       "sslPort": 0
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -24,14 +23,11 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:3086/"
     },
     "Service Fabric Local Cluster": {
       "commandName": "SFApp",
-      "launchUrl": "http://{ServiceIpAddress}:{ServicePort}/api/values",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "launchUrl": "http://{ServiceIpAddress}:{ServicePort}/api/values"
     }
   }
 }
