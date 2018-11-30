@@ -12,6 +12,7 @@ namespace ToDoService
         static DataContext()
         {
             // Seed to-do list
+
             ToDoList.Add(Model.ToDoItem.Load("Learn about microservices", 0, true));
             ToDoList.Add(Model.ToDoItem.Load("Learn about Service Fabric", 1, true));
             ToDoList.Add(Model.ToDoItem.Load("Learn about Service Fabric Mesh", 2, false));
