@@ -1,0 +1,22 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: todolistappGateway
+  properties:
+    description: todolistapp Gateway Resource
+    sourceNetwork:
+      name: Open
+    destinationNetwork:
+      name: todolistappNetwork
+    tcp:
+      - name: ToDoServiceTCP
+        port: "[parameters('ToDoService_ingressport')]"
+        destination:
+          applicationName: todolistapp
+          serviceName: ToDoService
+          endpointName: ToDoServiceListener
+      - name: WebFrontEndTCP
+        port: "[parameters('WebFrontEnd_ingressport')]"
+        destination:
+          applicationName: todolistapp
+          serviceName: WebFrontEnd
+          endpointName: WebFrontEndListener

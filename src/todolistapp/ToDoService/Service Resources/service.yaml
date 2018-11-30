@@ -1,6 +1,6 @@
 ﻿## Service definition ##
 application:
-  schemaVersion: 1.0.0-preview1
+  schemaVersion: 1.0.0-preview2
   name: todolistapp
   properties:
     services:
@@ -13,16 +13,16 @@ application:
               image: todoservice:dev
               endpoints:
                 - name: ToDoServiceListener
-                  port: 20008
-              environmentVariables:
-                - name: ASPNETCORE_URLS
-                  value: http://+:20008
+                  port: 80
+#              environmentVariables:
 #                - name: ApplicationInsights:InstrumentationKey
 #                  value: "<Place AppInsights key here, or reference it via a secret>"
               resources:
                 requests:
-                  cpu: 0.5
+                  cpu: "[parameters('ToDoService_cpu')]"
                   memoryInGB: 1
           replicaCount: 1
           networkRefs:
             - name: todolistappNetwork
+              endpointRefs:
+                - name: ToDoServiceListener
