@@ -20,7 +20,7 @@ application:
                  - name: ApiHostPort
                    value: 80
                  - name: ToDoServiceName
-                   value: ToDoService.todolistapp
+                   value: ToDoService
               resources:
                 requests:
                   cpu: "[parameters('WebFrontEnd_cpu')]"
