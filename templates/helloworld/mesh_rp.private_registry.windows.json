@@ -54,18 +54,18 @@
     },
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "helloWorldPrivateRegistryNetwork",
+      "name": "helloWorldPrivateRegistryNetworkWindows",
       "type": "Microsoft.ServiceFabricMesh/networks",
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
+        "description": "Service Fabric Mesh network for HelloWorld windows sample with private registry support.",
         "addressPrefix": "10.0.0.4/22",
-        "description": "Service Fabric Mesh network for HelloWorld sample with private registry support.",
         "ingressConfig": {
           "layer4": [
             {
               "publicPort": "80",
-              "applicationName": "helloWorldPrivateRegistryApp",
+              "applicationName": "helloWorldPrivateRegistryAppWindows",
               "serviceName": "helloWorldService",
               "endpointName": "helloWorldListener"
             }
@@ -75,27 +75,27 @@
     },
     {
       "apiVersion": "2018-09-01-preview",
-      "name": "helloWorldPrivateRegistryApp",
+      "name": "helloWorldPrivateRegistryAppWindows",
       "type": "Microsoft.ServiceFabricMesh/applications",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetwork",
+        "Microsoft.ServiceFabricMesh/networks/helloWorldPrivateRegistryNetworkWindows",
         "Microsoft.ServiceFabricMesh/secrets/hellowWorld_acr_password/values/v1"
       ],
       "properties": {
-        "description": "Service Fabric Mesh HelloWorld application with container deployed from private registry.",
+        "description": "Service Fabric Mesh HelloWorld windows application with container deployed from private registry.",
         "services": [
           {
             "type": "Microsoft.ServiceFabricMesh/services",
             "location": "[parameters('location')]",
             "name": "helloWorldService",
             "properties": {
-              "description": "Service Fabric Mesh HelloWorld service with container deployed from private registry.",
-              "osType": "linux",
+              "description": "Service Fabric Mesh HelloWorld windows service with container deployed from private registry.",
+              "osType": "Windows",
               "codePackages": [
                 {
                   "name": "helloWorldCode",
-                  "image": "[concat(parameters('registry-server'), '/seabreeze/azure-mesh-helloworld:1.1-alpine')]",
+                  "image": "[concat(parameters('registry-server'), '/seabreeze/azure-mesh-helloworld:1.1-windowsservercore-1709')]",
                   "imageRegistryCredential": {
                     "server": "[parameters('registry-server')]",
                     "username": "[parameters('registry-username')]",
@@ -118,7 +118,7 @@
               "replicaCount": "1",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'helloWorldPrivateRegistryNetworkWindows')]"
                 }
               ]
             }
