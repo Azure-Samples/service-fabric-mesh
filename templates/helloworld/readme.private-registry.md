@@ -1,6 +1,6 @@
 # Deploy a Service Fabric Mesh app from a private container image registry
 
-This article shows how to deploy a simple Azure Service Fabric Mesh app that uses container images from a public registry.
+This article shows how to deploy a simple Azure Service Fabric Mesh app that uses container images from a private registry.
 
 ## Install Docker
 
