@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.SFApp.Targets" Version="0.6.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.SFApp.Targets" Version="1.0.0-preview.4.4" />
   </ItemGroup>
 
   <ItemGroup>
