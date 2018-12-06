@@ -1,6 +1,6 @@
 volume:
   schemaVersion: 1.0.0-preview1
-  name: sfreliablevolume
+  name: SFReliableVolume
   properties:
     description: Service Fabric Reliable Volume backed volume.
     creationParameters:

@@ -11,6 +11,6 @@ gateway:
       - name: PublicConnection
         port: 80
         destination:
-            applicationName: counterAppApp
-            serviceName: counterAppService
-            endpointName: counterAppListener
+            applicationName: counterApp
+            serviceName: counterService
+            endpointName: counterServiceListener
