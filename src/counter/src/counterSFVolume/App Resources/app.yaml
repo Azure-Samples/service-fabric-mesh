@@ -12,11 +12,7 @@ application:
         - name: counterService
           image: seabreeze/azure-mesh-counter:0.5-nanoserver-1709
           volumes:
-          - name: myvol
-            creationParameters:
-              kind: ServiceFabricVolumeDisk
-              sizeDisk: Small
-            destinationPath: C:\app\data
+          - name: counterAppVolume
           endpoints:
           - name: counterServiceListener
             port: 8080
