@@ -56,6 +56,7 @@
                 "name": "*",
                 "routes": [
                   {
+                    "name": "helloRoute",
                     "match": {
                       "path": {
                         "value": "/hello",
@@ -70,6 +71,7 @@
                     }
                   },
                   {
+                    "name": "counterRoute",
                     "match": {
                       "path": {
                         "value": "/counter",
