@@ -1,0 +1,34 @@
+application:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppSFReliableVolume
+  properties:
+    description: Azure Service Fabric Mesh Counter Application.
+    services:
+    - name: counterService
+      properties:
+        description: A web service that serves the counter value stored in the Azure Files volume.
+        osType: Windows
+        codePackages:
+        - name: counterService
+          image: seabreeze/azure-mesh-counter:0.5-nanoserver-1709
+          volumes:
+          - name: myvol
+            creationParameters:
+              kind: ServiceFabricVolumeDisk
+              sizeDisk: Small
+            destinationPath: C:\app\data
+          endpoints:
+          - name: counterServiceListener
+            port: 8080
+          environmentVariables:
+          - name: STATE_FOLDER_NAME
+            value: CounterService
+          resources:
+            requests:
+              cpu: 0.5
+              memoryInGB: 1
+        replicaCount: 1
+        networkRefs:
+        - name: counterAppNetwork
+          endpointRefs:
+          - name: counterServiceListener

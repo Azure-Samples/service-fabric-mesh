@@ -1,0 +1,16 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppGateway
+  properties:
+    description: Gateway to connect to public internet.
+    sourceNetwork:
+        name: Open
+    destinationNetwork:
+        name: counterAppNetwork
+    tcp:
+      - name: PublicConnection
+        port: 80
+        destination:
+            applicationName: counterAppApp
+            serviceName: counterAppService
+            endpointName: counterAppListener

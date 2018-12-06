@@ -1,0 +1,9 @@
+volume:
+  schemaVersion: 1.0.0-preview1
+  name: sfreliablevolume
+  properties:
+    description: Service Fabric Reliable Volume backed volume.
+    creationParameters:
+      kind: ServiceFabricVolumeDisk
+      sizeDisk: Small
+    destinationPath: C:\app\data
