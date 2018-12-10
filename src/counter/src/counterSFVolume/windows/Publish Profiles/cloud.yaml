@@ -1,3 +1,18 @@
 ## Visual Studio SFApp Publish Profile ##
 vsSFAppPublishProfile:
   schemaVersion: 1.0.0-preview2
+  resourceGroupName: asnegilin2
+  subscription:
+    id: 13ad2c84-84fa-4798-ad71-e70c07af873f
+    name: Service Fabric Team - Temporary Testing
+    tenant: &o0
+      id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+      uniqueId: 38c5bf6a-0528-43cc-81b9-87f8dc09e34e
+  location:
+    name: eastus
+    displayName: East US
+  containerRegistry:
+    serverName: countersfvolume.azurecr.io
+    userName: counterSFVolume
+    resourceId: /subscriptions/13ad2c84-84fa-4798-ad71-e70c07af873f/resourceGroups/asnegilin2/providers/Microsoft.ContainerRegistry/registries/counterSFVolume
+    tenant: *o0

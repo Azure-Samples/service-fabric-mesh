@@ -6,8 +6,8 @@
     <SFApplicationToolingVersion>0.8.0.0</SFApplicationToolingVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="App Resources\volume.yaml" />
     <None Include="App Resources\app.yaml" />
-    <None Include="App Resources\gateway.yaml" />
     <None Include="App Resources\network.yaml" />
     <None Include="Publish Profiles\cloud.yaml" />
   </ItemGroup>

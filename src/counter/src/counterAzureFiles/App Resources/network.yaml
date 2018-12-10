@@ -1,6 +1,6 @@
 ## Network definition ##
 network:
-  schemaVersion: 1.0.0-preview1
+  schemaVersion: 1.0.0-preview2
   name: counterAppNetwork
   properties:
     description: Azure Service Fabric Mesh Counter Application network.

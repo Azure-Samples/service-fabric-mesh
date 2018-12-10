@@ -1,6 +1,6 @@
 ﻿## Service definition ##
 application:
-  schemaVersion: 1.0.0-preview1
+  schemaVersion: 1.0.0-preview2
   name: counterApp
   properties:
     services:
@@ -24,3 +24,5 @@ application:
           replicaCount: 1
           networkRefs:
             - name: counterAppNetwork
+              endpointRefs:
+                - name: counterServiceListener
