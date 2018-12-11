@@ -4,25 +4,31 @@ application:
   name: counterApp
   properties:
     services:
-      - name: counterService
-        properties:
-          description: A web service that serves the counter value stored in the Azure Files volume.
-          osType: Windows
-          codePackages:
-            - name: counterService
-              image: counterservice:dev
-              endpoints:
-                - name: counterServiceListener
-                  port: 8080
-              environmentVariables:
-                - name: ASPNETCORE_URLS
-                  value: http://+:8080
-              resources:
-                requests:
-                  cpu: 0.5
-                  memoryInGB: 0.5
-          replicaCount: 1
-          networkRefs:
-            - name: counterAppNetwork
-              endpointRefs:
-                - name: counterServiceListener
+    - name: counterService
+      properties:
+        description: A web service that serves the counter value stored in the Service Fabric Reliable Volume.
+        osType: Windows
+        codePackages:
+        - name: counterService
+          image: counterservice:dev
+          volumes:
+          - name: sfvol
+            creationParameters:
+              kind: ServiceFabricVolumeDisk
+              sizeDisk: Small
+            destinationPath: C:\app\data
+          endpoints:
+          - name: counterServiceListener
+            port: 80
+          environmentVariables:
+          - name: STATE_FOLDER_NAME
+            value: CounterService
+          resources:
+            requests:
+              cpu: 0.5
+              memoryInGB: 1
+        replicaCount: 1
+        networkRefs:
+        - name: counterAppNetwork
+          endpointRefs:
+          - name: counterServiceListener
