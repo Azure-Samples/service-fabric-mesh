@@ -4,10 +4,10 @@ EXPOSE 80
 
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
-COPY counterService/counterService.csproj counterService/
-RUN dotnet restore counterService/counterService.csproj
+COPY sfvolume/counterService/counterService.csproj sfvolume/counterService/
+RUN dotnet restore sfvolume/counterService/counterService.csproj
 COPY . .
-WORKDIR /src/counterService
+WORKDIR /src/sfvolume/counterService
 RUN dotnet build counterService.csproj -c Release -o /app
 
 FROM build AS publish

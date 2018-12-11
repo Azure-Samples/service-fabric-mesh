@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9B56FCB0-63B4-404F-8A09-42EF52B53347}") = "counterAzureFiles", "counterAzureFiles\counterAzureFiles.sfaproj", "{7D82C8E1-BB96-4224-9313-66E4708F84EC}"
+Project("{9B56FCB0-63B4-404F-8A09-42EF52B53347}") = "counter", "counter\windows\counter.sfaproj", "{E465F30F-4EF0-4C63-90C1-6AE2DC3CB135}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "counterService", "counterService\counterService.csproj", "{76F462BC-5933-4211-BE85-660B974C5764}"
 EndProject
