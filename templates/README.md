@@ -7,13 +7,13 @@ Follow this link for instructions on how to install the [Azure CLI and Mesh exte
 **Note**:
 If you've deployed your application using the Azure deploy button and the Azure Portal, use the following Azure CLI commands to get the public IPs for the application:
 
-``az mesh network list``
+``az mesh gateway list``
 
-This command will list all Mesh networks deployed in the current subscription. Look for the ``"publicIpAddress"`` and ``"publicPort"`` elements in the relevant network resource description.
+This command will list all Mesh networks deployed in the current subscription. Look for the ``"ipAddress"`` element in the relevant gateway resource description.
 
-``az mesh network show --resource-group <resource group name> --name <network name>``
+``az mesh gateway show --resource-group <resource group name> --name <gateway name>``
 
-This command will output all information about one network resource. To get the network name, look at the template file.
+This command will output all information about one gateway resource. To get the gateway name, look at the template file.
 
 |Sample|Scenario Description|Deploy to Azure - Linux|Deploy to Azure - Windows|
 |------------|--------------------|-----------------------|-------------------------|
