@@ -143,7 +143,12 @@
               "replicaCount": "[parameters('frontEndReplicaCount')]",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "WebFrontEndListener"
+                    }
+                  ]
                 }
               ]
             }
@@ -185,7 +190,12 @@
               "replicaCount": "[parameters('serviceReplicaCount')]",
               "networkRefs": [
                 {
-                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]"
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]",
+                  "endpointRefs": [
+                    {
+                      "name": "ToDoServiceListener"
+                    }
+                  ]
                 }
               ]
             }
@@ -201,20 +211,45 @@
       "location": "[parameters('location')]",
       "dependsOn": [],
       "properties": {
-        "description": "todolistappNetwork description.",
-        "addressPrefix": "10.0.0.0/22",
-        "ingressConfig": {
-          "layer4": [
-            {
-              "name": "WebFrontEndIngress",
-              "publicPort": "20001",
+        "kind": "Local",
+        "description": "Service Fabric Mesh Network for ToDoListApp sample.",
+        "networkAddressPrefix": "10.0.0.0/24"
+      }
+    },
+    {
+      "apiVersion": "2018-09-01-preview",
+      "name": "todolistappGateway",
+      "type": "Microsoft.ServiceFabricMesh/gateways",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/todolistappNetwork"
+      ],
+      "properties": {
+        "description": "Service Fabric Mesh Gateway for ToDoListApp sample.",
+        "sourceNetwork": {
+          "name": "Open"
+        },
+        "destinationNetwork": {
+          "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'todolistappNetwork')]"
+        },
+        "tcp": [
+          {
+            "name": "web",
+            "port": 80,
+            "destination": {
               "applicationName": "todolistapp",
               "serviceName": "WebFrontEnd",
               "endpointName": "WebFrontEndListener"
             }
-          ]
-        }
+          }
+        ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "publicIPAddress": {
+      "value": "[reference('todolistappGateway').ipAddress]",
+      "type": "string"
+    }
+  }
 }
