@@ -5,6 +5,8 @@
     <IsSFAppServiceProject>true</IsSFAppServiceProject>
     <RootNamespace>Microsoft.ServiceFabricMesh.Samples.Counter.Service</RootNamespace>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DockerfileContext>..\..</DockerfileContext>
+    <DockerfileFile>..\..\counterService\Dockerfile</DockerfileFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\counterService\wwwroot\**"
-          CopyToOutputDirectory="PreserveNewest"
-          LinkBase="wwwroot\" />
+    <None Include="..\..\counterService\wwwroot\**" CopyToOutputDirectory="PreserveNewest" LinkBase="wwwroot\" />
     <None Include="..\..\counterService\appsettings*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
