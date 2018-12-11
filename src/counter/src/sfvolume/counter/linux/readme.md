@@ -1,4 +1,5 @@
-Deploy using :
+* Change the container image. Default image is `seabreeze/azure-mesh-counter:0.5-alpine`.
+* Deploy using :
 ```
 cd "App Resources"
 
