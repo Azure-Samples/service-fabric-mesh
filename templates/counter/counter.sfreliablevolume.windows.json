@@ -49,7 +49,7 @@
               "codePackages": [
                 {
                   "name": "counterCode",
-                  "image": "seabreeze/azure-mesh-counter:0.1-nanoserver-1709",
+                  "image": "seabreeze/azure-mesh-counter:0.5-nanoserver-1709",
                   "volumes": [
                     {
                       "name": "sfvol",

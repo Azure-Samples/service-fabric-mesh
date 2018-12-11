@@ -15,7 +15,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
     public class Counter : IDisposable
     {
         private const string CounterUpdateInternalEnvVar = "COUNTER_UPDATE_INTERVAL_SECONDS";
-        
+
         private readonly string stateFilePath;
         private readonly string stateFolderPath;
 
@@ -42,7 +42,10 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             if (!File.Exists(this.stateFilePath))
             {
                 this.value = 0;
-                WriteCounterValue(this.stateFilePath, this.value);
+                if (!WriteCounterValue(this.stateFilePath, this.value))
+                {
+                    throw new Exception($"Failed to write to file {this.stateFilePath} from constructor of Counter.");
+                }
             }
             else
             {
@@ -74,8 +77,10 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
                 if (currentValue != -1)
                 {
                     currentValue++;
-                    WriteCounterValue(this.stateFilePath, currentValue);
-                    Interlocked.Exchange(ref this.value, currentValue);
+                    if (WriteCounterValue(this.stateFilePath, currentValue))
+                    {
+                        Interlocked.Exchange(ref this.value, currentValue);
+                    }
                 }
 
                 await Task.Delay(this.UpdateInterval);
@@ -100,7 +105,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
             }
         }
 
-        private static void WriteCounterValue(string stateFilePath, long value)
+        private static bool WriteCounterValue(string stateFilePath, long value)
         {
             try
             {
@@ -108,13 +113,17 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
                 {
                     var bytes = Encoding.ASCII.GetBytes(value.ToString());
                     file.Write(bytes, 0, bytes.Length);
-                    file.Flush();
+                    file.Flush(true);
                 }
+
+                return true;
             }
             catch(Exception e)
             {
                 Console.WriteLine("Error {0} in writer counter value to file {1}.", e.Message, stateFilePath);
             }
+
+            return false;
         }
 
         private static TimeSpan GetCounterUpdateInterval()
@@ -126,7 +135,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
 
             return TimeSpan.FromSeconds(counterUpdateInternalSeconds);
         }
-        
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
