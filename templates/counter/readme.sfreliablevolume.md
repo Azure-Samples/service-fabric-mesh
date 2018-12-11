@@ -1,21 +1,3 @@
----
-title: Store state in an Azure Service Fabric Mesh application by mounting Service Fabric Reliable Volume based volume inside the container | Microsoft Docs
-description: Learn how to store state in an Azure Service Fabric Mesh application by mounting Service Fabric Reliable Volume based volume inside the container using the Azure CLI.
-services: service-fabric-mesh
-documentationcenter: .net
-author: ashishnegi
-manager: raunakpandya
-editor: ''
-ms.assetid:
-ms.service: service-fabric-mesh
-ms.devlang: azure-cli
-ms.topic: conceptual
-ms.tgt_pltfrm: NA
-ms.workload: NA
-ms.date: 08/09/2018
-ms.author: asnegi
-ms.custom: mvc, devcenter
----
 
 # Store state in an Azure Service Fabric Mesh application by mounting a highly available Service Fabric Reliable Volume based volume inside the container
 
@@ -30,7 +12,7 @@ The `counterService` periodically reads a counter value from a file, increments 
 
 ## Prerequisites
 
-You can use the Azure Cloud Shell or a local installation of the Azure CLI to complete this task. To use the Azure CLI with this article, ensure that `az --version` returns at least `azure-cli (2.0.43)`.  Install (or update) the Azure Service Fabric Mesh CLI extension module by following these [instructions](service-fabric-mesh-howto-setup-cli.md).
+You can use the Azure Cloud Shell or a local installation of the Azure CLI to complete this task. To use the Azure CLI with this article, ensure that `az --version` returns at least `azure-cli (2.0.43)`.  Install (or update) the Azure Service Fabric Mesh CLI extension module by following these [instructions](https://docs.microsoft.com/azure/service-fabric-mesh/service-fabric-mesh-howto-setup-cli).
 
 ## Sign in to Azure
 
@@ -89,5 +71,5 @@ az group delete --resource-group myResourceGroup
 ## Next steps
 
 - View the Azure Files volume sample application on [GitHub](https://github.com/Azure-Samples/service-fabric-mesh/tree/master/src/counter).
-- To learn more about Service Fabric Resource Model, see [Service Fabric Mesh Resource Model](service-fabric-mesh-service-fabric-resources.md).
-- To learn more about Service Fabric Mesh, read the [Service Fabric Mesh overview](service-fabric-mesh-overview.md).
+- To learn more about Service Fabric Resource Model, see [Service Fabric Mesh Resource Model](https://docs.microsoft.com/azure/service-fabric-mesh/service-fabric-mesh-service-fabric-resources).
+- To learn more about Service Fabric Mesh, read the [Service Fabric Mesh overview](https://docs.microsoft.com/azure/service-fabric-mesh/service-fabric-mesh-overview).
