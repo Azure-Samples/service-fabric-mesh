@@ -1,5 +1,5 @@
 volume:
-  schemaVersion: 1.0.0-preview2
+  schemaVersion: 1.0.0-preview1
   name: counterVolume
   properties:
     description: Azure Files storage volume for counter App.
