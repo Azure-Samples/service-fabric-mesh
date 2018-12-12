@@ -65,6 +65,19 @@ The application name for the Linux app is `meshAppLinux` and for Windows app is 
 az mesh app show --resource-group myResourceGroup --name meshAppLinux
 ```
 
+## More ingress gateway samples
+You could deploy the templates in this folder to try out different ingress gateway configurations. 
+
+### Ingress listening on different ports:
+The meshingress.ports.windows.json and meshingress.ports.linux.json configures two different http rules for the gateway. It listens on two different ports: 
+* http://PublicIPAddress/ forwards the request to gateway on port 80. This is routed to the helloWorldService.
+* http://PublicIPAddress:8080/ forwards the request to gateway on port 8080. This is routed to the counterService.
+
+### Ingress routing based on headers:
+The meshingress.headers.windows.json and meshingress.headers.linux.json configures header based routing for the gateway. 
+* http://PublicIPAddress/ forwards the request to helloWorldService if the header serviceNameHeader=helloWorld is present in the incoming request.
+* http://PublicIPAddress/ forwards the request to counterService based on the presence of header serviceNameHeader=counter.
+
 ## Clean up
 
 When you are ready to delete the application, run the [az group delete][az-group-delete] command to remove the resource group and the application and network resources it contains.
