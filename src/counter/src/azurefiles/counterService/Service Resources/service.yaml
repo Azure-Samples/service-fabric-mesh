@@ -24,5 +24,3 @@ application:
           replicaCount: 1
           networkRefs:
             - name: counterAppNetwork
-              endpointRefs:
-                - name: counterServiceListener
