@@ -1,0 +1,16 @@
+gateway:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppGateway
+  properties:
+    description: counterApp Gateway Resource
+    sourceNetwork:
+      name: Open
+    destinationNetwork:
+      name: counterAppNetwork
+    tcp:
+    - name: tcpconfiguration
+      port: 80
+      destination:
+        applicationName: counterApp
+        serviceName: counterService
+        endpointName: counterServiceListener

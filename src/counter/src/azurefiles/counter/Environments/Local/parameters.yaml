@@ -1,0 +1,4 @@
+## Parameters File ##
+azurefile-accountName: ""
+azurefile-accountKey: ""
+azurefile-shareName: ""

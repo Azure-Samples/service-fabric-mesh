@@ -1,0 +1,7 @@
+network:
+  schemaVersion: 1.0.0-preview2
+  name: counterAppNetwork
+  properties:
+    kind: Local
+    description: Azure Service Fabric Mesh Counter Application network.
+    networkAddressPrefix: 10.0.0.0/24
