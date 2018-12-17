@@ -65,6 +65,31 @@ The application name for the Linux app is `meshAppLinux` and for Windows app is 
 az mesh app show --resource-group myResourceGroup --name meshAppLinux
 ```
 
+##Samples to demonstrate different ways to route requests to endpoints
+The previous sample demonstrated how to route a request to different services using information in the URI of the requests. Following samples demonstrate routing requests using other configuration settings.
+While each sample uses a specific config setting to demonstrate the capabilities of the gateway, these configs can be combined to create more complex routing rules. 
+
+### Ingress listening on different ports:
+This sample demonstrates how to route requests coming on different ports to different services. 
+The meshingress.ports.windows.json and meshingress.ports.linux.json configures two different http rules for the gateway.
+
+```azurecli
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/master/templates/ingress/meshingress.ports.linux.json --parameters "{\"location\": {\"value\": \"eastus\"}}" 
+```
+
+* http://PublicIPAddress/ forwards the request to gateway on port 80. This is routed to the helloWorldService.
+* http://PublicIPAddress:8080/ forwards the request to gateway on port 8080. This is routed to the counterService.
+
+### Ingress routing based on headers:
+This sample demonstrates routing messages to different services based on the value of a specific header in the request.
+
+```azurecli
+az mesh deployment create --resource-group myResourceGroup --template-uri https://raw.githubusercontent.com/Azure-Samples/service-fabric-mesh/master/templates/ingress/meshingress.headers.linux.json --parameters "{\"location\": {\"value\": \"eastus\"}}" 
+```
+
+* http://PublicIPAddress/ forwards the request to helloWorldService if the header serviceNameHeader=helloWorld is present in the incoming request.
+* http://PublicIPAddress/ forwards the request to counterService based on the presence of header serviceNameHeader=counter.
+
 ## Clean up
 
 When you are ready to delete the application, run the [az group delete][az-group-delete] command to remove the resource group and the application and network resources it contains.
