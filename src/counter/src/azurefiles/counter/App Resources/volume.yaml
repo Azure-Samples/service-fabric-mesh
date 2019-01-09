@@ -7,4 +7,4 @@ volume:
     azureFileParameters:
         shareName: "[parameters('azurefile-shareName')]"
         accountName: "[parameters('azurefile-accountName')]"
-        accountKey: "[resourceId('Microsoft.ServiceFabricMesh/secrets/values','azurefilesecret','v1')]"
+        accountKey: "[reference('secrets/azurefilesecret/values/v1')]"
