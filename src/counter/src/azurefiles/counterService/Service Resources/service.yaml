@@ -1,6 +1,6 @@
 ﻿## Service definition ##
 application:
-  schemaVersion: 1.0.0-preview1
+  schemaVersion: 1.0.0-preview2
   name: counterApp
   properties:
     services:
@@ -11,9 +11,12 @@ application:
           codePackages:
             - name: counterService
               image: counterservice:dev
+              volumeRefs:
+                - name: counterVolume
+                  destinationPath: C:\app\data
               endpoints:
                 - name: counterServiceListener
-                  port: 8080
+                  port: 80
               environmentVariables:
                 - name: ASPNETCORE_URLS
                   value: http://+:8080

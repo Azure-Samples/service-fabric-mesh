@@ -1,14 +1,7 @@
-## Network definition ##
 network:
-  schemaVersion: 1.0.0-preview1
+  schemaVersion: 1.0.0-preview2
   name: counterAppNetwork
   properties:
+    kind: Local
     description: Azure Service Fabric Mesh Counter Application network.
-    addressPrefix: 10.0.0.4/22
-    ingressConfig:
-      layer4:
-        - name: counterServiceIngress
-          publicPort: 8080
-          applicationName: counterApp
-          serviceName: counterService
-          endpointName: counterServiceListener
+    networkAddressPrefix: 10.0.0.0/24
