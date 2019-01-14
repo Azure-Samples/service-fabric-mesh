@@ -1,0 +1,5 @@
+application:
+  schemaVersion: 1.0.0-preview2
+  name: counterApp
+  properties:
+    description: Azure Service Fabric Mesh Counter Application backed by Service Fabric Reliable Volume.
