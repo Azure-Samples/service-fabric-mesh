@@ -65,7 +65,6 @@
         "services": [
           {
             "type": "Microsoft.ServiceFabricMesh/services",
-            "location": "[parameters('location')]",
             "name": "web",
             "properties": {
               "description": "Service Fabric Mesh Visual Objects Web Service.",
@@ -103,7 +102,6 @@
           },
           {
             "type": "Microsoft.ServiceFabricMesh/services",
-            "location": "[parameters('location')]",
             "name": "worker",
             "properties": {
               "description": "Service Fabric Mesh Visual Objects Worker Service.",

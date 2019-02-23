@@ -108,7 +108,6 @@
         "services": [
           {
             "type": "Microsoft.ServiceFabricMesh/services",
-            "location": "[parameters('location')]",
             "name": "helloWorldService",
             "properties": {
               "description": "Service Fabric Mesh HelloWorld service with container deployed from private registry.",
