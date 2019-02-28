@@ -7,4 +7,4 @@ volume:
     azureFileParameters:
         shareName: "[parameters('azurefile-shareName')]"
         accountName: "[parameters('azurefile-accountName')]"
-        accountKey: "[parameters('azurefile-accountKey')]"
+        accountKey: "[reference('secrets/azurefilesecret/values/v1')]"
