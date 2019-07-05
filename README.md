@@ -1,6 +1,8 @@
 ---
-services: service-fabric
-author: mikkelhegn
+languages: []
+products:
+- azure
+topic: sample
 ---
 
 ![Mesh-01](./media/Mesh_icon.png)
