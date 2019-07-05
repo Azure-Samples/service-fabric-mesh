@@ -1,5 +1,7 @@
 ---
-languages: []
+languages:
+- csharp
+- yaml
 products:
 - azure
 topic: sample
