@@ -4,7 +4,7 @@ languages:
 - yaml
 products:
 - azure
-topic: sample
+page_type: sample
 ---
 
 ![Mesh-01](./media/Mesh_icon.png)
