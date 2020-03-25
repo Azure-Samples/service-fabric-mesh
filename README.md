@@ -4,6 +4,7 @@ languages:
 - yaml
 products:
 - azure
+- azure-service-fabric
 page_type: sample
 ---
 
