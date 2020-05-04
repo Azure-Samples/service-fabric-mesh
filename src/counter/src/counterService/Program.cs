@@ -18,7 +18,6 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service.Controllers
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .Build();
     }
 }

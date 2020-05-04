@@ -13,6 +13,7 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -28,20 +29,27 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // The following line enables Application Insights telemetry collection.
+            services.AddApplicationInsightsTelemetry();
+
             services.AddMvc();
             services.AddSingleton<Counter>(CreateCounter());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        { 
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseMvc();
+
+            // Runs matching. An endpoint is selected and set on the HttpContext if a match is found.
+            app.UseRouting();
+
             var webSocketOptions = new WebSocketOptions()
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(120),
@@ -66,7 +74,6 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
                 {
                     await next();
                 }
-
             });
         }
 

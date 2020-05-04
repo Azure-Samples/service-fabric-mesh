@@ -1,8 +1,8 @@
-FROM microsoft/aspnetcore:2.0-nanoserver-1709 AS base
+FROM microsoft/aspnetcore:3.0-nanoserver-1709 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM microsoft/aspnetcore-build:3.0 AS build
 WORKDIR /src
 # Using sfvolume here does not matter as code files are in this directory.
 COPY sfvolume/counterService/counterService.csproj sfvolume/counterService/
