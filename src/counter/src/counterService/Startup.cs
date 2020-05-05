@@ -31,9 +31,8 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
         {
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry();
-
-            services.AddMvc();
             services.AddSingleton<Counter>(CreateCounter());
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +48,10 @@ namespace Microsoft.ServiceFabricMesh.Samples.Counter.Service
 
             // Runs matching. An endpoint is selected and set on the HttpContext if a match is found.
             app.UseRouting();
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
 
             var webSocketOptions = new WebSocketOptions()
             {
