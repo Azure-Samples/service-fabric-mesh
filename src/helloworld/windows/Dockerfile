@@ -1,5 +1,4 @@
-FROM microsoft/iis:windowsservercore-1709
-
+FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-1709
 RUN mkdir C:\site
 
 RUN powershell -NoProfile -Command \

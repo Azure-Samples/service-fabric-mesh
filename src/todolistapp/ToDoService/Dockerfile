@@ -1,8 +1,8 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime-nanoserver-1803 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1-nanoserver-1803 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
 WORKDIR /src
 COPY ToDoService/ToDoService.csproj ToDoService/
 RUN dotnet restore ToDoService/ToDoService.csproj
