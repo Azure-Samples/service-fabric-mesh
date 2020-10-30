@@ -1,7 +1,7 @@
-FROM microsoft/dotnet:2.0-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1 AS base
 WORKDIR /app
 
-FROM microsoft/dotnet:2.0-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 as build
 WORKDIR /src
 COPY worker/worker.csproj worker/
 RUN dotnet restore worker/worker.csproj
