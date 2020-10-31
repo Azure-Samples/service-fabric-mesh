@@ -1,7 +1,7 @@
-FROM microsoft/aspnetcore:2.0-nanoserver-1709 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1-nanoserver-1709 AS base
 WORKDIR /app
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 as build
 WORKDIR /src
 COPY VotingData/VotingData.csproj VotingData/
 RUN dotnet restore VotingData/VotingData.csproj
